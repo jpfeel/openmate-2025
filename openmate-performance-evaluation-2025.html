@@ -1,0 +1,3326 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)https://www.genspark.ai/api/files/s/QGQvaUer -->
+<html lang="ko" data-theme="light" style=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>2025년 오픈메이트 인사평가 시스템</title>
+    
+    <!--
+    ═══════════════════════════════════════════════════════════════════
+    🔧 Google Sheets 연동 설정 가이드
+    ═══════════════════════════════════════════════════════════════════
+    
+    📌 1단계: Google Sheets 생성
+    - Google Drive에서 새 스프레드시트 생성
+    - 시트 이름: "인사평가_2025" (원하는 이름)
+    
+    📌 2단계: Google Apps Script 작성
+    1. 스프레드시트에서 '확장 프로그램' > 'Apps Script' 클릭
+    2. 아래 코드를 복사하여 붙여넣기:
+    
+    ────────────────────────────────────────────────────────────────
+    function doPost(e) {
+      const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      const data = JSON.parse(e.postData.contents);
+      
+      // 헤더가 없으면 추가
+      if (sheet.getLastRow() === 0) {
+        const headers = Object.keys(data);
+        sheet.appendRow(headers);
+      }
+      
+      // 데이터 추가
+      const values = Object.values(data);
+      sheet.appendRow(values);
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        'result': 'success'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    ────────────────────────────────────────────────────────────────
+    
+    📌 3단계: 웹 앱 배포
+    1. Apps Script에서 '배포' > '새 배포' 클릭
+    2. 유형: '웹 앱' 선택
+    3. 액세스 권한: '모든 사용자' 선택
+    4. '배포' 클릭
+    5. 생성된 '웹 앱 URL' 복사
+    
+    📌 4단계: URL 설정
+    - JavaScript 코드에서 GOOGLE_SCRIPT_URL 값을
+      복사한 웹 앱 URL로 변경하세요
+    
+    ═══════════════════════════════════════════════════════════════════
+    -->
+    
+    <link rel="stylesheet" href="./openmate-performance-evaluation-2025_files/pico.min.css">
+    <link href="./openmate-performance-evaluation-2025_files/css2" rel="stylesheet">
+    <link href="./openmate-performance-evaluation-2025_files/all.min.css" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #34495e;
+        --accent-color: #3498db;
+        --success-color: #2ecc71;
+        --warning-color: #f1c40f;
+        --border-color: #bdc3c7;
+        --light-bg: #f8f9fa;
+      }
+
+      body {
+        font-family: 'Noto Sans KR', Arial, sans-serif;
+        background-color: #eef2f5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        padding-top: 0; /* Remove fixed padding */
+        box-sizing: border-box;
+        line-height: 1.6;
+      }
+
+      /* Navigation Bar */
+      .navbar {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .navbar-menu {
+        display: flex;
+        gap: 5px;
+        flex-wrap: nowrap; /* 줄바꿈 방지 */
+        overflow-x: auto; /* 필요시 가로 스크롤 */
+      }
+
+      .nav-item {
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-size: 0.9rem;
+        opacity: 0.8;
+        white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+        flex-shrink: 0; /* 아이템 축소 방지 */
+      }
+
+      .nav-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+      }
+
+      .nav-item.active {
+        background-color: var(--accent-color);
+        opacity: 1;
+        font-weight: bold;
+      }
+
+      .navbar-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .action-btn {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .action-btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .action-btn.primary {
+        background-color: var(--accent-color);
+      }
+
+      .action-btn.success {
+        background-color: var(--success-color);
+      }
+
+      /* Sub Navigation Bar */
+      .sub-navbar {
+        position: relative;
+        width: 100%;
+        height: 50px;
+        background-color: #fff;
+        border-bottom: 2px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 20px;
+      }
+
+      .sub-nav-item {
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #666;
+        border: 2px solid transparent;
+      }
+
+      .sub-nav-item:hover {
+        background-color: #f0f0f0;
+        color: var(--primary-color);
+      }
+
+      .sub-nav-item.active {
+        background-color: var(--accent-color);
+        color: white;
+        border-color: var(--accent-color);
+        font-weight: bold;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        position: relative;
+        width: 100%;
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .status-bar {
+        font-size: 0.9rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .save-indicator {
+        font-size: 0.8rem;
+        color: #888;
+      }
+
+      .progress-container {
+        width: 200px;
+        height: 10px;
+        background-color: #eee;
+        border-radius: 5px;
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 10px;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background-color: var(--success-color);
+        width: 0%;
+        transition: width 0.3s;
+      }
+
+      /* Document Container */
+      .document-wrapper {
+        max-width: 210mm;
+        margin: 60px auto;
+        background-color: white;
+        padding: 20mm;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        min-height: 297mm;
+      }
+
+      .document-page {
+        display: none;
+      }
+
+      .document-page.active {
+        display: block;
+        animation: fadeIn 0.3s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Input Styling */
+      input[type='text'],
+      input[type='number'],
+      input[type='date'],
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 8px;
+        font-family: inherit;
+        font-size: inherit;
+        background-color: #fff;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        margin-bottom: 0;
+      }
+
+      input[type='text']:focus,
+      input[type='number']:focus,
+      input[type='date']:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        outline: none;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      input[type='checkbox'] {
+        width: auto;
+        margin-right: 5px;
+        transform: scale(1.2);
+      }
+
+      /* Read-only calculation fields */
+      input[readonly] {
+        background-color: #f8f9fa;
+        border: 1px dashed #ccc;
+        color: #555;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      /* Styles from original document */
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: 'Noto Sans KR', sans-serif;
+        color: var(--primary-color);
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+      }
+
+      .page-break {
+        page-break-after: always;
+        break-after: page;
+        height: 2px;
+        margin: 40px 0;
+        border-bottom: 1px dashed #ccc;
+        display: block;
+      }
+
+      .cover-page {
+        text-align: center;
+        padding-top: 60px;
+        margin-bottom: 60px;
+        border: 2px solid var(--primary-color); /* Uniform border style */
+        padding: 60px 40px;
+        height: 900px;
+        position: relative;
+      }
+
+      .cover-title {
+        font-size: 32pt;
+        font-weight: 700;
+        margin-bottom: 20px;
+        border-bottom: 3px solid var(--primary-color);
+        display: inline-block;
+        padding-bottom: 15px;
+      }
+
+      .cover-subtitle {
+        font-size: 18pt;
+        color: var(--secondary-color);
+        margin-bottom: 80px;
+      }
+
+      .cover-info {
+        text-align: left;
+        margin: 0 auto;
+        width: 70%;
+        font-size: 14pt;
+      }
+
+      .cover-info-row {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        align-items: center;
+      }
+
+      .cover-label {
+        font-weight: bold;
+        width: 120px;
+        color: var(--secondary-color);
+      }
+
+      .cover-value {
+        flex-grow: 1;
+      }
+
+      .doc-id-box {
+        position: absolute;
+        bottom: 40px;
+        right: 40px;
+        text-align: right;
+        font-size: 10pt;
+        color: #777;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        font-size: 10pt;
+      }
+
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 8px 12px;
+        vertical-align: middle;
+      }
+
+      th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .input-area {
+        background-color: #fff;
+        min-height: 24px;
+      }
+
+      .large-input {
+        min-height: 80px;
+      }
+
+      .gray-bg {
+        background-color: #f2f2f2;
+      }
+
+      .section-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 8px 15px;
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+
+      .sub-header {
+        border-bottom: 2px solid var(--secondary-color);
+        color: var(--secondary-color);
+        padding-bottom: 5px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-size: 12pt;
+        font-weight: bold;
+      }
+
+      .total-score-row {
+        background-color: #e8f4f8;
+        font-weight: bold;
+      }
+
+      ul.dashed-list {
+        list-style-type: none;
+        padding-left: 0;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .font-bold {
+        font-weight: bold;
+      }
+      .mb-2 {
+        margin-bottom: 10px;
+      }
+      .w-20 {
+        width: 20%;
+      }
+      .w-30 {
+        width: 30%;
+      }
+
+      /* Toast Notification */
+      #toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 4px;
+        padding: 16px;
+        position: fixed;
+        z-index: 10000;
+        left: 50%;
+        bottom: 30px;
+        transform: translateX(-50%);
+        font-size: 17px;
+        opacity: 0;
+        transition:
+          opacity 0.5s,
+          bottom 0.5s;
+      }
+
+      #toast.show {
+        visibility: visible;
+        opacity: 1;
+        bottom: 50px;
+      }
+
+      /* Print Styles */
+      @media print {
+        @page {
+          size: A4;
+          margin: 15mm;
+        }
+        
+        body {
+          padding: 0;
+          background-color: white;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        
+        .navbar,
+        .sub-navbar,
+        .toolbar,
+        #toast,
+        .action-btn {
+          display: none !important;
+        }
+        
+        .document-wrapper {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          max-width: none;
+        }
+        
+        .document-page {
+          display: none;
+        }
+        
+        .document-page.active {
+          display: block;
+        }
+
+        /* Show all pages when printing "All" - handled by JS to toggle class */
+        .document-page.print-all {
+          display: block;
+          page-break-after: always;
+        }
+
+        /* Remove input styling for print */
+        input,
+        textarea,
+        select {
+          border: 1px solid #ddd !important;
+          background: transparent !important;
+          padding: 4px !important;
+          font-size: 9pt !important;
+          line-height: 1.5 !important;
+          color: #000 !important;
+        }
+        
+        textarea {
+          overflow: visible !important;
+          height: auto !important;
+          min-height: 60px !important;
+          white-space: pre-wrap !important;
+          word-wrap: break-word !important;
+        }
+        
+        /* Print replacement divs */
+        .print-replacement {
+          page-break-inside: avoid;
+        }
+        
+        /* Ensure text content is visible */
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea {
+          -webkit-appearance: none;
+          appearance: none;
+        }
+        
+        input[type='checkbox'] {
+          display: inline-block;
+          -webkit-appearance: checkbox;
+          appearance: checkbox;
+        }
+        
+        input[readonly] {
+          font-weight: bold;
+          color: #000 !important;
+        }
+
+        /* Table styles for print */
+        table {
+          page-break-inside: auto;
+          border-collapse: collapse;
+        }
+        
+        tr {
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
+        
+        th, td {
+          page-break-inside: avoid;
+          border: 1px solid #000 !important;
+          padding: 8px !important;
+        }
+
+        /* Ensure cover page height */
+        .cover-page {
+          height: auto;
+          min-height: 900px;
+          page-break-after: always;
+          margin-bottom: 0;
+        }
+        
+        /* Page breaks */
+        .page-break {
+          display: none;
+        }
+        
+        /* Section headers and content flow */
+        .section-header {
+          page-break-after: avoid;
+          margin-top: 30px;
+        }
+        
+        .section-header:first-of-type {
+          margin-top: 0;
+        }
+        
+        .project-item,
+        .activity-item {
+          page-break-inside: avoid;
+        }
+        
+        .project-item:not(:first-child),
+        .activity-item:not(:first-child) {
+          page-break-before: always;
+        }
+        
+        .sub-header {
+          page-break-after: avoid;
+        }
+        
+        /* Prevent orphans */
+        p, div, li {
+          orphans: 3;
+          widows: 3;
+        }
+        
+        /* Hide delete buttons */
+        button[onclick*="remove"] {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body style="">
+    <!-- Navigation Bar -->
+    <div class="navbar">
+      <div class="navbar-brand"><i class="fas fa-file-contract"></i> 오픈메이트 성과평가</div>
+      <div class="navbar-menu">
+        <div class="nav-item active" onclick="switchMainTab(&#39;notice&#39;)">📢 공지사항</div>
+        <div class="nav-item" onclick="switchMainTab(&#39;guide&#39;)">📋 가이드라인</div>
+        <div class="nav-item" onclick="switchMainTab(&#39;report&#39;)">📝 성과기술서</div>
+        <div class="nav-item" onclick="switchMainTab(&#39;evaluation&#39;)">⭐ 성과평가서</div>
+      </div>
+      <div class="navbar-actions">
+        <button class="action-btn" onclick="resetForm()"><i class="fas fa-undo"></i> 초기화</button>
+        <button class="action-btn" onclick="saveData(true)"><i class="fas fa-save"></i> 임시저장</button>
+        <button class="action-btn success" onclick="submitData()"><i class="fas fa-paper-plane"></i> 제출</button>
+      </div>
+    </div>
+
+    <!-- Sub Navigation Bar -->
+    <div class="sub-navbar" id="sub-navbar-report" style="display: none;">
+      <div class="sub-nav-item active" onclick="switchTab(1)">팀원용</div>
+      <div class="sub-nav-item" onclick="switchTab(6)">팀장용</div>
+      <div class="sub-nav-item" onclick="switchTab(4)">본부장용</div>
+    </div>
+    <div class="sub-navbar" id="sub-navbar-evaluation" style="display: none;">
+      <div class="sub-nav-item" onclick="switchTab(2)">PM 평가용 (팀원 평가)</div>
+      <div class="sub-nav-item" onclick="switchTab(3)">본부장/팀장 평가용 (팀원 평가)</div>
+      <div class="sub-nav-item" onclick="switchTab(5)">임원 평가용 (본부장/팀장 평가)</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="status-bar">
+        <span id="current-doc-name" style="font-weight: bold; color: var(--primary-color)">📢 공지사항</span>
+        <span class="save-indicator" id="save-status">마지막 저장: 오후 2:51:36</span>
+        <div style="display: flex; align-items: center">
+          <span>작성 완료도: </span>
+          <div class="progress-container">
+            <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+          </div>
+          <span id="progress-text" style="margin-left: 5px; font-weight: bold">0%</span>
+        </div>
+      </div>
+      <div>
+        <button class="action-btn primary" onclick="printDocument()">
+          <i class="fas fa-print"></i> PDF 저장 / 인쇄
+        </button>
+      </div>
+    </div>
+
+    <!-- Document Wrapper -->
+    <div class="document-wrapper">
+      <!-- NOTICE PAGE: 공지사항 -->
+      <div id="notice-page" class="document-page active" data-progress="100">
+        <div style="text-align: center; margin-bottom: 50px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+          <h1 style="margin: 0; font-size: 28pt; color: white;">📢 2025년도 오픈메이트 정기 인사평가 시행 안내</h1>
+          <p style="margin-top: 10px; font-size: 12pt; opacity: 0.9;">OPENmate Performance Evaluation Notice 2025</p>
+        </div>
+
+        <div style="background-color: #f8f9fa; padding: 30px; border-left: 5px solid var(--accent-color); margin-bottom: 30px;">
+          <p style="font-size: 11pt; line-height: 1.8; margin-bottom: 15px;">
+            <strong>임직원 여러분, 안녕하십니까.</strong>
+          </p>
+          <p style="font-size: 11pt; line-height: 1.8; margin-bottom: 15px;">
+            2025년 한 해 동안 회사의 성장과 목표 달성을 위해 헌신해주신 여러분의 노고에 깊이 감사드립니다.
+          </p>
+          <p style="font-size: 11pt; line-height: 1.8; margin-bottom: 15px;">
+            우리 회사는 2025년도 업무 성과를 공정하게 진단하고, 2026년의 새로운 도약을 준비하기 위해 아래와 같이 <strong style="color: var(--accent-color);">[2025년도 정기 인사평가]</strong>를 실시합니다.
+          </p>
+          <p style="font-size: 11pt; line-height: 1.8; margin-bottom: 15px;">
+            금번 평가는 '프로젝트 성과'와 '개인 역량'을 균형 있게 반영하기 위해 평가 단계를 1차(PM)와 2차(부서장)로 세분화하였으며, 이를 통해 보다 종합적이고 객관적인 평가가 이루어지도록 설계하였습니다.
+          </p>
+          <p style="font-size: 11pt; line-height: 1.8;">
+            전 임직원께서는 아래의 일정과 기준을 확인하시어, <strong>기한 내에 성과기술서 작성을 완료</strong>해 주시기 바랍니다.
+          </p>
+        </div>
+
+        <div class="section-header">1. 평가 개요</div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr>
+              <th class="w-30" style="background-color: #f0f0f0;">평가 대상</th>
+              <td>오픈메이트 전 임직원 (수습 기간 중인 자 제외/별도 문의)</td>
+            </tr>
+            <tr>
+              <th style="background-color: #f0f0f0;">평가 기간</th>
+              <td>2025년 1월 1일 ~ 2025년 12월 31일 (1년간의 성과)</td>
+            </tr>
+            <tr>
+              <th style="background-color: #f0f0f0;">시행 일정</th>
+              <td>2026년 1,2월 중 (세부 일정 하단 참조)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-header">2. 평가 프로세스 및 체계</div>
+        <p style="margin-bottom: 15px; font-size: 10pt;">
+          평가는 <strong>[본인 작성 → 1차 평가(PM) → 2차 평가(팀장/본부장) → 등급 확정]</strong>의 순서로 진행됩니다.
+        </p>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 25%;">구 분</th>
+              <th style="width: 20%;">주 체</th>
+              <th style="width: 55%;">내 용 및 주요 기준</th>
+            </tr>
+            <tr>
+              <td class="font-bold" style="background-color: #e3f2fd;">STEP 1<br>성과기술서 작성</td>
+              <td class="text-center">전 직원<br>(본인)</td>
+              <td>
+                • 1년간 수행한 프로젝트 및 업무 성과 상세 기술<br>
+                • 정량적(수치) 성과 및 정성적 노력 기재
+              </td>
+            </tr>
+            <tr>
+              <td class="font-bold" style="background-color: #fff3e0;">STEP 2-1<br>성과 평가</td>
+              <td class="text-center">PM<br>(Project Manager)</td>
+              <td>
+                <strong>[프로젝트 수행 능력 중심]</strong><br>
+                • 프로젝트 기여도 및 산출물 품질<br>
+                • 납기 준수 및 과업 수행의 성실도
+              </td>
+            </tr>
+            <tr>
+              <td class="font-bold" style="background-color: #e8f5e9;">STEP 2-2<br>성과 평가</td>
+              <td class="text-center">팀장 / 본부장</td>
+              <td>
+                <strong>[종합 역량 중심]</strong><br>
+                • 직무 전문성 및 조직 기여도<br>
+                • 성장 잠재력, 협업 태도, 리더십 등
+              </td>
+            </tr>
+            <tr>
+              <td class="font-bold" style="background-color: #fce4ec;">STEP 3<br>최종 확정</td>
+              <td class="text-center" colspan="2">
+                • 1/2차 평가 결과를 합산하여 최종 등급(S~D) 확정
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-header">3. 주요 일정 (Action Plan)</div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 40%;">단계</th>
+              <th style="width: 30%;">일정</th>
+              <th style="width: 30%;">대상</th>
+            </tr>
+            <tr>
+              <td class="font-bold">성과기술서 작성 및 제출</td>
+              <td class="text-center" style="color: #d32f2f; font-weight: bold;">2026. 01. 12(월) ~ 01. 23(금)<br>[2주간]</td>
+              <td class="text-center">전 임직원<br>(본부장/팀장 포함)</td>
+            </tr>
+            <tr>
+              <td class="font-bold">성과평가 (PM)</td>
+              <td class="text-center">2026. 01. 26(월) ~ 02. 06(금)</td>
+              <td class="text-center">프로젝트 PM</td>
+            </tr>
+            <tr>
+              <td class="font-bold">성과평가 (팀장/본부장)</td>
+              <td class="text-center">2026. 01. 26(월) ~ 02. 06(금)</td>
+              <td class="text-center">부서장</td>
+            </tr>
+            <tr>
+              <td class="font-bold">평가 결과 확정 및 피드백</td>
+              <td class="text-center" colspan="2">2월 중 별도 안내 예정</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="section-header">4. 작성 및 유의 사항</div>
+        <div style="background-color: #fff8e1; padding: 20px; border-left: 5px solid #fbc02d; margin-bottom: 30px;">
+          <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+            <li><strong>안내된 URL에 따라 작성 후 제출</strong></li>
+            <li><strong>구체적 기술:</strong> 성과는 막연한 서술보다는 <strong>구체적인 수치(정량)</strong>와 <strong>해결 과정(정성)</strong>이 드러나도록 작성</li>
+            <li><strong>기한 준수:</strong> 원활한 평가 진행을 위해 <strong style="color: #d32f2f;">제출 기한을 엄수</strong></li>
+          </ul>
+        </div>
+
+        <div class="section-header">5. 문의처</div>
+        <table style="margin-bottom: 50px;">
+          <tbody>
+            <tr>
+              <th style="width: 30%; background-color: #f0f0f0;">인사평가 관련 문의</th>
+              <td>경영지원실 안윤경 부장</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="background-color: #e8eaf6; padding: 30px; text-align: center; border-radius: 10px; margin-top: 50px;">
+          <p style="font-size: 11pt; line-height: 1.8; margin: 0;">
+            <strong>2025년 한 해, 여러분이 흘린 땀방울이<br>공정한 평가를 통해 빛을 발할 수 있도록 최선을 다하겠습니다.</strong><br>
+            임직원 여러분의 적극적인 협조를 부탁드립니다.
+          </p>
+          <p style="margin-top: 20px; font-weight: bold; font-size: 12pt;">감사합니다.</p>
+        </div>
+      </div>
+
+      <!-- GUIDELINE PAGE: 가이드라인 -->
+      <div id="guide-page" class="document-page" data-progress="100">
+        <div style="text-align: center; margin-bottom: 50px; padding: 30px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 10px;">
+          <h1 style="margin: 0; font-size: 28pt; color: white;">📋 2025년도 오픈메이트 인사평가 가이드라인</h1>
+          <p style="margin-top: 10px; font-size: 12pt; opacity: 0.9;">OPENmate Performance Evaluation Guidelines 2025</p>
+        </div>
+
+        <!-- 평가 개요 -->
+        <div class="section-header">1. 평가 개요 (Overview)</div>
+        
+        <div class="sub-header">1.1. 목적</div>
+        <p style="margin-bottom: 20px; line-height: 1.8;">
+          본 평가는 2025년 한 해 동안 임직원이 수행한 <strong>업무 성과와 역량을 객관적이고 공정하게 측정</strong>하는 데 목적이 있습니다. 
+          평가 결과는 <strong style="color: var(--accent-color);">2026년도 연봉 책정, 승진 심사, 인센티브 지급</strong>의 핵심 근거로 활용되며, 
+          개인의 성장 방향을 설정하는 피드백 자료로 사용됩니다.
+        </p>
+
+        <div class="sub-header">1.2. 대상 및 기간</div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr>
+              <th class="w-30">평가 대상</th>
+              <td>오픈메이트 전 임직원 (단, 2025년 10월 1일 이후 입사자는 등급 산정 제외)</td>
+            </tr>
+            <tr>
+              <th>평가 기간</th>
+              <td>2025. 01. 01 ~ 2025. 12. 31 (1년간)</td>
+            </tr>
+            <tr>
+              <th>시행 시기</th>
+              <td>2026년 1월 중 (세부 일정 6항 참조)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 평가 체계 -->
+        <div class="section-header">2. 평가 체계 및 프로세스 (Process)</div>
+        <p style="margin-bottom: 15px;">
+          평가는 프로젝트 수행 능력을 검증하는 <strong>[1차 평가]</strong>와 조직 기여 및 종합 역량을 판단하는 <strong>[2차 평가]</strong>로 이원화하여 진행됩니다.
+        </p>
+        <table style="margin-bottom: 20px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">단계</th>
+              <th style="width: 20%;">주체<br>(Evaluator)</th>
+              <th style="width: 50%;">평가 관점<br>(View Point)</th>
+              <th style="width: 15%;">반영 비중</th>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">1차 평가</td>
+              <td class="text-center">PM<br>(Project Manager)</td>
+              <td>
+                <strong>"일(Project)과 결과"</strong><br>
+                투입된 프로젝트 내에서의 실질적 성과, 산출물 품질, 납기 준수
+              </td>
+              <td class="text-center font-bold" style="color: var(--accent-color);">50%</td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">2차 평가</td>
+              <td class="text-center">부서장<br>(팀장/본부장)</td>
+              <td>
+                <strong>"사람(Person)과 성장"</strong><br>
+                직무 전문성, 조직 기여도, 리더십 및 태도
+              </td>
+              <td class="text-center font-bold" style="color: var(--accent-color);">50%</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: 9pt; color: #666; margin-bottom: 30px;">
+          <strong>Note:</strong> 팀장급 이상 보직자는 1차 평가를 생략하고, 본부장(임원)의 단독 평가 또는 별도 기준을 적용할 수 있음.
+        </p>
+
+        <div class="page-break"></div>
+
+        <!-- 상세 평가 기준 -->
+        <div class="section-header">3. 상세 평가 기준 (Criteria)</div>
+        <p style="margin-bottom: 20px;">
+          피평가자의 직책(일반/리더)에 따라 평가의 중점이 다르게 적용됩니다.
+        </p>
+
+        <div class="sub-header">3.1. 1차 평가 기준 (PM 평가) - 공통</div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 30%;">평가 항목</th>
+              <th>평가 기준</th>
+            </tr>
+            <tr>
+              <td class="font-bold">업무 완성도<br>(Quality)</td>
+              <td>산출물의 오류 최소화 및 요구사항(기획/고객 니즈) 충족 여부</td>
+            </tr>
+            <tr>
+              <td class="font-bold">납기 준수<br>(Delivery)</td>
+              <td>마일스톤 및 최종 마감 기한 준수, 일정 지연 시 사전 보고 및 대책 수립 여부</td>
+            </tr>
+            <tr>
+              <td class="font-bold">협업 및 소통<br>(Collaboration)</td>
+              <td>팀원 간 정보 공유, 이슈의 투명한 보고, 협업 태도</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="sub-header">3.2. 2차 평가 기준 (부서장 평가) - 직책별 차등</div>
+        
+        <div style="background-color: #e3f2fd; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2196f3;">
+          <strong>Type A. 일반 직원</strong>
+        </div>
+        <table style="margin-bottom: 20px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 30%;">평가 항목</th>
+              <th>평가 기준</th>
+            </tr>
+            <tr>
+              <td class="font-bold">직무 전문성</td>
+              <td>해당 연차에 요구되는 기술/지식 습득 및 활용 능력</td>
+            </tr>
+            <tr>
+              <td class="font-bold">조직 기여도</td>
+              <td>제안서 작성, 사내 TF 참여, 기술 세미나 등 프로젝트 외 기여 활동</td>
+            </tr>
+            <tr>
+              <td class="font-bold">성장 잠재력</td>
+              <td>새로운 기술 습득 노력 및 향후 발전 가능성</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="background-color: #fff3e0; padding: 15px; margin-bottom: 15px; border-left: 4px solid #ff9800;">
+          <strong>Type B. 리더급 (팀장/본부장)</strong>
+        </div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 30%;">평가 항목</th>
+              <th>평가 기준</th>
+            </tr>
+            <tr>
+              <td class="font-bold">사업 성과<br>(Business)</td>
+              <td>조직의 매출/이익 목표 달성, 수주 기여, 리스크 관리 성과</td>
+            </tr>
+            <tr>
+              <td class="font-bold">조직 관리<br>(People)</td>
+              <td>팀원 육성(멘토링), 핵심 인재 유지(Retention), 프로세스 효율화</td>
+            </tr>
+            <tr>
+              <td class="font-bold">리더십<br>(Leadership)</td>
+              <td>회사의 핵심 가치 전파, 부서 간 갈등 조정 및 협업 유도</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <!-- 평가 등급 -->
+        <div class="section-header">4. 평가 등급 및 산정 방식 (Grading Policy)</div>
+
+        <div class="sub-header">4.1. 상대평가 원칙</div>
+        <p style="margin-bottom: 15px;">
+          최종 등급은 1차/2차 평가 점수를 합산한 총점을 기준으로, <strong>전사 석차(Ranking)</strong>를 산출하여 상대평가 비율에 따라 부여합니다.
+        </p>
+
+        <div class="sub-header">4.2. 등급 배분 비율 (Distribution)</div>
+        <table style="margin-bottom: 30px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">등급</th>
+              <th style="width: 15%;">비율</th>
+              <th>정의 (Definition)</th>
+            </tr>
+            <tr style="background-color: #e8f5e9;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #2e7d32;">S</td>
+              <td class="text-center font-bold">상위 5%</td>
+              <td>
+                <strong>탁월 (Outstanding)</strong><br>
+                기대치를 월등히 상회하며, 조직 성장에 획기적으로 기여함
+              </td>
+            </tr>
+            <tr style="background-color: #e3f2fd;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #1976d2;">A</td>
+              <td class="text-center font-bold">상위 10%</td>
+              <td>
+                <strong>우수 (Excellent)</strong><br>
+                목표를 초과 달성하고, 수행 과정과 결과가 매우 우수함
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold" style="font-size: 14pt;">B</td>
+              <td class="text-center font-bold">중간 70%</td>
+              <td>
+                <strong>보통 (Good)</strong><br>
+                부여된 역할과 목표를 안정적으로 수행함 (Standard Performance)
+              </td>
+            </tr>
+            <tr style="background-color: #fff3e0;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #f57c00;">C</td>
+              <td class="text-center font-bold">하위 10%</td>
+              <td>
+                <strong>미흡 (Needs Improvement)</strong><br>
+                목표 달성이 다소 미진하거나, 역량 및 태도의 개선이 필요함
+              </td>
+            </tr>
+            <tr style="background-color: #ffebee;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #c62828;">D</td>
+              <td class="text-center font-bold">하위 5%</td>
+              <td>
+                <strong>부진 (Unsatisfactory)</strong><br>
+                업무 수행 능력이 현저히 부족하여 조직 성과에 부정적 영향을 줌
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="sub-header">4.3. 동점자 처리 기준</div>
+        <p style="margin-bottom: 10px;">커트라인에서 총점이 동일할 경우, 다음 우선순위에 따라 상위 등급을 부여합니다.</p>
+        <ul style="margin-left: 20px; margin-bottom: 30px; line-height: 1.8;">
+          <li><strong>2차 평가 점수가 높은 자</strong> (조직 기여도 및 잠재력 우대)</li>
+          <li><strong>현 직급 체류 연수가 오래된 자</strong> (승진 대상자 고려)</li>
+        </ul>
+
+        <div class="page-break"></div>
+
+        <!-- 성과기술서 작성 가이드 -->
+        <div class="section-header">5. 성과기술서 작성 가이드 (Writing Tips)</div>
+        <p style="margin-bottom: 20px;">
+          평가의 기초 자료가 되는 '<strong>성과기술서</strong>'는 다음 원칙에 따라 작성해 주십시오.
+        </p>
+
+        <div style="background-color: #fff8e1; padding: 20px; border-left: 5px solid #fbc02d; margin-bottom: 20px;">
+          <h3 style="margin-top: 0; color: #f57f17;">✅ 작성 원칙</h3>
+          <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+            <li><strong>결과(Outcome) 중심 기술:</strong> 단순히 "무엇을 했습니다"가 아닌, <strong>"어떤 문제를 해결했고, 어떤 성과를 냈습니다"</strong>로 작성합니다.</li>
+            <li><strong>구체적 수치(Data) 활용:</strong> 가능한 한 <strong>정량적인 수치</strong>(금액, %, 시간, 건수, 정확도 등)를 포함하십시오.</li>
+            <li><strong>직책에 맞는 작성:</strong>
+              <ul style="margin-top: 5px;">
+                <li>일반 직원: 본인의 실무 완수 능력과 기술 성장 중심으로 기술</li>
+                <li>리더급: 조직의 재무적 성과와 팀원 육성/관리 성과 중심으로 기술</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="sub-header">작성 예시 (Good vs Bad)</div>
+        
+        <div style="background-color: #ffebee; padding: 15px; margin-bottom: 10px; border-left: 4px solid #ef5350;">
+          <strong style="color: #c62828;">❌ Bad 예시 - 개발 직군</strong>
+          <p style="margin: 10px 0 0 0;">Smart K2C 기업 분석 조회 기능을 개발했음.</p>
+        </div>
+
+        <div style="background-color: #e8f5e9; padding: 15px; margin-bottom: 30px; border-left: 4px solid #66bb6a;">
+          <strong style="color: #2e7d32;">✅ Good 예시 - 개발 직군</strong>
+          <p style="margin: 10px 0 0 0;">
+            기업 분석 모듈의 <strong>쿼리 최적화(Tuning)</strong>를 통해 대용량 데이터 조회 속도를 평균 <strong style="color: #2e7d32;">5초에서 1초 미만으로 단축</strong>하고, 
+            <strong>API 응답 오류율 0%</strong>를 달성함.
+          </p>
+        </div>
+
+        <div style="background-color: #ffebee; padding: 15px; margin-bottom: 10px; border-left: 4px solid #ef5350;">
+          <strong style="color: #c62828;">❌ Bad 예시 - 데이터 분석 직군</strong>
+          <p style="margin: 10px 0 0 0;">기술사업화 유망 기업 선별 분석 리포트를 작성/제출했음.</p>
+        </div>
+
+        <div style="background-color: #e8f5e9; padding: 15px; margin-bottom: 30px; border-left: 4px solid #66bb6a;">
+          <strong style="color: #2e7d32;">✅ Good 예시 - 데이터 분석 직군</strong>
+          <p style="margin: 10px 0 0 0;">
+            기존 평가 모델에 새로운 파생변수(<strong>특허 인용지수 등</strong>)를 추가 발굴하여 타겟 기업 선별 정확도를 
+            <strong style="color: #2e7d32;">기존 70%에서 85%로 향상</strong>시켰으며, 도출된 인사이트가 <strong>고객사 핵심 전략 지표로 채택</strong>됨.
+          </p>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- 추진 일정 -->
+        <div class="section-header">6. 추진 일정 (Schedule)</div>
+        <table style="margin-bottom: 50px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 40%;">단계</th>
+              <th style="width: 35%;">일정</th>
+              <th style="width: 25%;">대상</th>
+            </tr>
+            <tr>
+              <td class="font-bold">성과기술서 작성 (본인)</td>
+              <td class="text-center" style="color: #d32f2f; font-weight: bold;">2026. 01. 05(월) ~ 01. 16(금)<br>[2주간]</td>
+              <td class="text-center">전 임직원</td>
+            </tr>
+            <tr>
+              <td class="font-bold">1차 평가 (PM)</td>
+              <td class="text-center">2026. 01. 26(월) ~ 02. 06(금)</td>
+              <td class="text-center">프로젝트 PM</td>
+            </tr>
+            <tr>
+              <td class="font-bold">2차 평가 (부서장)</td>
+              <td class="text-center">2026. 01. 26(월) ~ 02. 06(금)</td>
+              <td class="text-center">팀장/본부장</td>
+            </tr>
+            <tr>
+              <td class="font-bold">결과 확정 및 피드백</td>
+              <td class="text-center" colspan="2">2026. 02월 중 예정</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="text-align: right; margin-top: 80px; font-size: 10pt; color: #666;">
+          <p style="margin: 5px 0;"><strong>2026. 01.</strong></p>
+          <p style="margin: 5px 0;"><strong>주식회사 오픈메이트</strong></p>
+          <p style="margin: 5px 0;"><strong>경영지원본부</strong></p>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- 평가표 예시 -->
+        <div style="text-align: center; margin: 50px 0; padding: 30px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 10px;">
+          <h2 style="margin: 0; font-size: 24pt; color: white;">📊 평가표 예시</h2>
+          <p style="margin-top: 10px; font-size: 11pt; opacity: 0.9;">Evaluation Form Examples</p>
+        </div>
+
+        <div class="section-header">[Sheet 1] 1차 평가표 (PM 평가용)</div>
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+          <strong>- 대상:</strong> 전 직원 (프로젝트 투입 인원)<br>
+          <strong>- 평가자:</strong> 해당 프로젝트 PM (프로젝트가 여러 개일 경우 프로젝트별 각각 평가 후 평균 산출)<br>
+          <strong>- 평가 관점:</strong> <span style="color: var(--accent-color);">"주어진 일을 얼마나 잘 완수했는가?"</span> (Project Performance)
+        </p>
+
+        <table style="margin-bottom: 40px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">대분류</th>
+              <th style="width: 20%;">중분류<br>(가중치)</th>
+              <th style="width: 30%;">세부 평가 항목<br>(질문)</th>
+              <th style="width: 35%;">평가 기준<br>(착안 사항)</th>
+            </tr>
+            <tr>
+              <td class="text-center font-bold" rowspan="1">산출물</td>
+              <td class="text-center">완성도 및 품질<br><strong style="color: var(--accent-color);">(40%)</strong></td>
+              <td>Q1. 산출물은 요구사항을 정확히 충족하였으며, 오류가 없는가?</td>
+              <td style="font-size: 9pt;">
+                - 고객(또는 기획서)의 요구사항 반영 여부<br>
+                - 테스트 단계에서의 결함/버그 발생 빈도<br>
+                - 산출물의 논리적 완결성 및 디테일
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold" rowspan="1">일정</td>
+              <td class="text-center">납기 준수<br><strong style="color: var(--accent-color);">(30%)</strong></td>
+              <td>Q2. 정해진 마감 기한 내에 업무를 완수하였는가?</td>
+              <td style="font-size: 9pt;">
+                - 최종 납기일 준수 여부<br>
+                - 중간 보고(마일스톤) 일정 준수 여부<br>
+                - 지연 예상 시 사전에 보고하고 대책을 마련했는가?
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold" rowspan="1">수행 태도</td>
+              <td class="text-center">협업 및 소통<br><strong style="color: var(--accent-color);">(30%)</strong></td>
+              <td>Q3. 팀원과 원활히 소통하며, 이슈 발생 시 즉시 공유했는가?</td>
+              <td style="font-size: 9pt;">
+                - 본인 업무 진행 상황의 투명한 공유<br>
+                - 유관 부서/팀원 요청 사항에 대한 피드백 속도<br>
+                - 문제 발생 시 은폐하지 않고 해결하려는 태도
+              </td>
+            </tr>
+            <tr style="background-color: #f0f0f0;">
+              <td class="text-center font-bold" rowspan="1">종합</td>
+              <td class="text-center">PM 코멘트</td>
+              <td colspan="2">
+                (서술형) 해당 프로젝트 수행 중 돋보였던 점과 아쉬웠던 점을 기재<br>
+                <span style="font-size: 9pt; color: #666;">(2차 평가자가 참고할 수 있도록 구체적 사실 위주 작성)</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">[Sheet 2] 2차 평가표 (부서장 평가용)</div>
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+          <strong>- 평가자:</strong> 팀장 또는 본부장<br>
+          <strong>- 평가 관점:</strong> <span style="color: var(--accent-color);">"조직에 얼마나 기여하고 성장했는가?"</span> (Competency &amp; Contribution)
+        </p>
+
+        <div style="background-color: #e3f2fd; padding: 15px; margin: 20px 0; border-left: 5px solid #2196f3;">
+          <strong style="font-size: 12pt;">Type A. 일반 직원용 (팀원)</strong>
+        </div>
+
+        <table style="margin-bottom: 40px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">대분류</th>
+              <th style="width: 20%;">중분류<br>(가중치)</th>
+              <th style="width: 30%;">세부 평가 항목<br>(질문)</th>
+              <th style="width: 35%;">평가 기준<br>(착안 사항)</th>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">직무 역량</td>
+              <td class="text-center">전문성 및 성장<br><strong style="color: var(--accent-color);">(40%)</strong></td>
+              <td>Q1. 해당 직급/연차에 요구되는 전문 기술(지식)을 보유하고 있는가?</td>
+              <td style="font-size: 9pt;">
+                - 업무 수행에 필요한 핵심 스킬 숙련도<br>
+                - 새로운 기술 습득 노력 및 업무 적용 사례
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">조직 기여</td>
+              <td class="text-center">조직 기여도<br><strong style="color: var(--accent-color);">(40%)</strong></td>
+              <td>Q2. 프로젝트 외 활동을 통해 조직의 자산(Asset) 축적에 기여했는가?</td>
+              <td style="font-size: 9pt;">
+                - 제안서 작성 지원, 사내 TF 참여 실적<br>
+                - 지식 공유(세미나, 기술 문서 작성) 활동<br>
+                - 신규 입사자 온보딩 지원 등
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">태도</td>
+              <td class="text-center">조직 적합성<br><strong style="color: var(--accent-color);">(20%)</strong></td>
+              <td>Q3. 회사의 핵심 가치를 준수하고 긍정적인 팀워크를 형성하는가?</td>
+              <td style="font-size: 9pt;">
+                - 근태 및 사규 준수<br>
+                - 동료와의 협력적 관계 유지<br>
+                - (유휴 기간) 자기개발 및 업무 지원 태도
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <div style="background-color: #fff3e0; padding: 15px; margin: 20px 0; border-left: 5px solid #ff9800;">
+          <strong style="font-size: 12pt;">Type B. 리더급용 (팀장/본부장)</strong>
+        </div>
+
+        <table style="margin-bottom: 40px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">대분류</th>
+              <th style="width: 20%;">중분류<br>(가중치)</th>
+              <th style="width: 30%;">세부 평가 항목<br>(질문)</th>
+              <th style="width: 35%;">평가 기준<br>(착안 사항)</th>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">사업 성과</td>
+              <td class="text-center">목표 달성 및 전략<br><strong style="color: var(--accent-color);">(50%)</strong></td>
+              <td>Q1. 조직의 재무적 성과(매출/이익) 및 핵심 과제를 완수했는가?</td>
+              <td style="font-size: 9pt;">
+                - 매출/수주 목표 달성률, 이익률 개선<br>
+                - 프로젝트 리스크 방어 및 고객 만족도(재계약 등)<br>
+                - 신규 사업 기회 발굴 및 제안 성공률
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">조직 관리</td>
+              <td class="text-center">육성 및 효율화<br><strong style="color: var(--accent-color);">(30%)</strong></td>
+              <td>Q2. 구성원을 전문가로 육성하고, 조직 운영을 효율화했는가?</td>
+              <td style="font-size: 9pt;">
+                - 팀원 역량 향상(멘토링) 및 퇴사율 관리<br>
+                - 차기 리더 발굴 및 승계 계획<br>
+                - 불필요한 프로세스 개선 및 시스템화
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold">리더십</td>
+              <td class="text-center">가치 및 협업<br><strong style="color: var(--accent-color);">(20%)</strong></td>
+              <td>Q3. 전사 관점에서 사고하고, 타 조직과 유기적으로 협력하는가?</td>
+              <td style="font-size: 9pt;">
+                - 회사의 비전/핵심 가치 전파 및 솔선수범<br>
+                - 부서 간 이기주의 타파 및 갈등 조정 능력<br>
+                - 위기 상황에서의 리더십 발휘
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <!-- 종합 결과 집계표 -->
+        <div style="text-align: center; margin: 50px 0; padding: 30px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border-radius: 10px;">
+          <h2 style="margin: 0; font-size: 24pt; color: white;">📈 종합 결과 집계 및 상대평가 등급표</h2>
+          <p style="margin-top: 10px; font-size: 11pt; opacity: 0.9;">Final Ranking &amp; Relative Grading Table</p>
+        </div>
+
+        <p style="background-color: #fff8e1; padding: 15px; border-left: 5px solid #fbc02d; margin-bottom: 30px; line-height: 1.8;">
+          <strong>📌 Note:</strong> 이 시트는 평가자들이 입력하는 곳이 아니라, <strong>인사 담당자가 전체 데이터를 취합하여 등급을 확정하는 '계산용 시트'</strong>입니다.
+        </p>
+
+        <div class="sub-header">최종 점수 산출 방법</div>
+        <p style="margin-bottom: 20px;">
+          최종 점수는 <strong>1차 평가(PM)와 2차 평가(부서장) 점수를 가중 평균</strong>하여 산출합니다.
+        </p>
+
+        <div style="background-color: #e3f2fd; padding: 20px; margin-bottom: 30px; border-left: 5px solid #2196f3;">
+          <h4 style="margin-top: 0; color: #1976d2;">💡 점수 산출 공식</h4>
+          <p style="font-size: 12pt; margin: 10px 0;"><strong>최종 점수 = (1차 평가 × 50%) + (2차 평가 × 50%)</strong></p>
+          <p style="margin-top: 15px; font-size: 10pt; color: #666;">
+            ※ 리더급의 경우 1차 평가 없이 2차 평가 100% 적용 가능
+          </p>
+        </div>
+
+        <div class="sub-header">상대평가 등급 배분</div>
+        <p style="margin-bottom: 20px;">
+          최종 점수를 기준으로 전체 인원을 순위화한 후, 상대평가 방식으로 등급을 배분합니다.
+        </p>
+
+        <table style="margin-bottom: 40px;">
+          <tbody>
+            <tr style="background-color: #f9f9f9;">
+              <th style="width: 15%;">등급</th>
+              <th style="width: 20%;">배분 비율</th>
+              <th style="width: 65%;">정의</th>
+            </tr>
+            <tr style="background-color: #e8f5e9;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #2e7d32;">S</td>
+              <td class="text-center font-bold">상위 5%</td>
+              <td>
+                <strong>탁월 (Outstanding)</strong><br>
+                기대치를 월등히 상회하며, 조직 성장에 획기적으로 기여함
+              </td>
+            </tr>
+            <tr style="background-color: #e3f2fd;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #1976d2;">A</td>
+              <td class="text-center font-bold">상위 10%</td>
+              <td>
+                <strong>우수 (Excellent)</strong><br>
+                목표를 초과 달성하고, 수행 과정과 결과가 매우 우수함
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center font-bold" style="font-size: 14pt;">B</td>
+              <td class="text-center font-bold">중간 70%</td>
+              <td>
+                <strong>보통 (Good)</strong><br>
+                부여된 역할과 목표를 안정적으로 수행함 (Standard Performance)
+              </td>
+            </tr>
+            <tr style="background-color: #fff3e0;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #f57c00;">C</td>
+              <td class="text-center font-bold">하위 10%</td>
+              <td>
+                <strong>미흡 (Needs Improvement)</strong><br>
+                기대 수준에 다소 미치지 못하며 개선 필요
+              </td>
+            </tr>
+            <tr style="background-color: #ffebee;">
+              <td class="text-center font-bold" style="font-size: 14pt; color: #c62828;">D</td>
+              <td class="text-center font-bold">하위 5%</td>
+              <td>
+                <strong>부진 (Unsatisfactory)</strong><br>
+                현저히 기대에 미달하며, 즉각적인 개선 조치 필요
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="background-color: #fff8e1; padding: 20px; border-left: 5px solid #fbc02d; margin-bottom: 30px;">
+          <h4 style="margin-top: 0; color: #f57f17;">⚠️ 상대평가 유의사항</h4>
+          <ul style="margin-left: 20px; line-height: 1.8; margin-bottom: 0;">
+            <li>등급은 <strong>전체 평가 대상자 중 상대적 순위</strong>에 따라 결정됩니다.</li>
+            <li>절대적인 점수가 높아도 다른 인원의 점수가 더 높으면 낮은 등급을 받을 수 있습니다.</li>
+            <li>동점자가 커트라인에 걸릴 경우, 사전에 정한 우선순위 기준에 따라 등급을 결정합니다.</li>
+          </ul>
+        </div>
+
+        <div class="page-break"></div>
+
+      </div>
+
+      <!-- DOCUMENT 1: 성과기술서 (직원용) -->
+      <div id="doc1" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <div style="margin-top: 100px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">ANNUAL REPORT</div>
+            <div class="cover-title">2025년 성과기술서</div>
+            <div class="cover-subtitle">프로젝트 및 프로젝트 외 활동 성과 보고</div>
+
+            <div class="cover-info" style="margin-top: 80px">
+              <div class="cover-info-row">
+                <span class="cover-label">NAME</span>
+                <div class="cover-value"><input type="text" name="doc1_name" placeholder="성명 입력"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">DEPT</span>
+                <div class="cover-value"><input type="text" name="doc1_dept" placeholder="부서명 입력"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">ROLE</span>
+                <div class="cover-value"><input type="text" name="doc1_role" placeholder="직급 입력"></div>
+              </div>
+            </div>
+
+            <div style="margin-top: 150px; border-top: 1px solid #ccc; padding-top: 20px; font-weight: bold; color: #888">
+              PERFORMANCE REVIEW 2025
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Projects Container -->
+        <div id="projects-container">
+          <!-- Project #1 (Default) -->
+          <div class="project-item" data-project-id="1">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="section-header" style="flex-grow: 1; margin: 0;">프로젝트 성과기술서 #1</div>
+              <button class="action-btn" style="background-color: #e74c3c; margin-left: 10px;" onclick="removeProject(1)">
+                <i class="fas fa-trash"></i> 삭제
+              </button>
+            </div>
+            <p style="font-size: 10pt; color: #666; margin-bottom: 20px">
+              * 2025년 1월~12월 기간동안 수행했던 모든 프로젝트에 대해 개별 작성
+            </p>
+
+            <table>
+              <tbody><tr>
+                <th class="w-20">PROJECT NAME</th>
+                <td colspan="3"><input type="text" name="doc1_proj1_name" placeholder="프로젝트명 입력"></td>
+              </tr>
+              <tr>
+                <th>PERIOD</th>
+                <td>
+                  <div style="display: flex; gap: 5px; align-items: center">
+                    <input type="date" name="doc1_proj1_start" style="width: 140px"> ~
+                    <input type="date" name="doc1_proj1_end" style="width: 140px">
+                  </div>
+                </td>
+                <th class="w-20">ROLE</th>
+                <td>
+                  <select name="doc1_proj1_role">
+                    <option value="">선택하세요</option>
+                    <option value="PM">PM</option>
+                    <option value="PL">PL</option>
+                    <option value="개발">개발</option>
+                    <option value="기획">기획</option>
+                    <option value="분석">분석</option>
+                    <option value="디자인">디자인</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">1. 프로젝트 목표</div>
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px">
+              <textarea name="doc1_proj1_goals" placeholder="- 목표 내용 입력
+- 목표 내용 입력" style="border: none; width: 100%"></textarea>
+            </div>
+
+            <div class="sub-header">2. 주요 수행 내용</div>
+            <table style="margin-bottom: 20px">
+              <tbody><tr style="background-color: #f9f9f9">
+                <th style="width: 10%">No.</th>
+                <th style="width: 30%">주요 업무 영역</th>
+                <th style="width: 60%">상세 업무 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center">1</td>
+                <td><input type="text" name="doc1_proj1_task1_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj1_task1_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+              <tr>
+                <td class="text-center">2</td>
+                <td><input type="text" name="doc1_proj1_task2_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj1_task2_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+              <tr>
+                <td class="text-center">3</td>
+                <td><input type="text" name="doc1_proj1_task3_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj1_task3_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">3. 주요 성과 (정량/정성)</div>
+            <table style="margin-bottom: 20px">
+              <tbody><tr>
+                <th class="w-20">구분</th>
+                <th>성과 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정량적 성과</td>
+                <td><textarea name="doc1_proj1_perf_quant" placeholder="목표 대비 정량적 달성 내용 기술"></textarea></td>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정성적 성과</td>
+                <td><textarea name="doc1_proj1_perf_qual" placeholder="정성적 성과 내용 기술"></textarea></td>
+              </tr>
+            </tbody></table>
+
+            <div class="page-break"></div>
+          </div>
+        </div>
+
+        <!-- Add Project Button -->
+        <div style="text-align: center; margin: 30px 0;">
+          <button class="action-btn primary" onclick="addProject()" style="padding: 10px 30px; font-size: 14pt;">
+            <i class="fas fa-plus-circle"></i> 프로젝트 추가
+          </button>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Activities Container -->
+        <div id="activities-container">
+          <!-- Activity #1 (Default) -->
+          <div class="activity-item" data-activity-id="1">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="section-header" style="flex-grow: 1; margin: 0;">프로젝트 외 성과기술서 #1</div>
+              <button class="action-btn" style="background-color: #e74c3c; margin-left: 10px;" onclick="removeActivity(1)">
+                <i class="fas fa-trash"></i> 삭제
+              </button>
+            </div>
+            <p style="font-size: 10pt; color: #666; margin-bottom: 20px">
+              * 내부 프로젝트, 사내 활동, 교육 이수 등 프로젝트 외 활동 내역 작성
+            </p>
+
+            <table>
+              <tbody><tr>
+                <th class="w-20">ACTIVITY NAME</th>
+                <td colspan="3"><input type="text" name="doc1_act1_name" placeholder="활동명 입력"></td>
+              </tr>
+              <tr>
+                <th>PERIOD</th>
+                <td colspan="3">
+                  <div style="display: flex; gap: 5px; align-items: center">
+                    <input type="date" name="doc1_act1_start" style="width: 140px"> ~
+                    <input type="date" name="doc1_act1_end" style="width: 140px">
+                  </div>
+                </td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">1. 활동 목표</div>
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px">
+              <textarea name="doc1_act1_goals" placeholder="- 목표 내용 입력
+- 목표 내용 입력" style="border: none; width: 100%"></textarea>
+            </div>
+
+            <div class="sub-header">2. 활동 내용</div>
+            <table>
+              <tbody><tr style="background-color: #f9f9f9">
+                <th style="width: 30%">주요 활동</th>
+                <th style="width: 70%">상세 수행 내용 기술</th>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act1_item1_title" placeholder="주요 활동 1"></td>
+                <td><input type="text" name="doc1_act1_item1_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act1_item2_title" placeholder="주요 활동 2"></td>
+                <td><input type="text" name="doc1_act1_item2_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act1_item3_title" placeholder="주요 활동 3"></td>
+                <td><input type="text" name="doc1_act1_item3_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">3. 주요 성과</div>
+            <table>
+              <tbody><tr>
+                <th class="w-20">구분</th>
+                <th>성과 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정량적 성과</td>
+                <td><textarea name="doc1_act1_quant" placeholder="목표 대비 정량적 달성 내용 기술"></textarea></td>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정성적 성과</td>
+                <td><textarea name="doc1_act1_qual" placeholder="정성적 성과 내용 기술"></textarea></td>
+              </tr>
+            </tbody></table>
+
+            <div class="page-break"></div>
+          </div>
+        </div>
+
+        <!-- Add Activity Button -->
+        <div style="text-align: center; margin: 30px 0;">
+          <button class="action-btn primary" onclick="addActivity()" style="padding: 10px 30px; font-size: 14pt;">
+            <i class="fas fa-plus-circle"></i> 프로젝트 외 활동 추가
+          </button>
+        </div>
+      </div>
+
+      <!-- DOCUMENT 2: 성과 평가서 (PM용) -->
+      <div id="doc2" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <div style="position: absolute; top: 40px; left: 40px; font-size: 10pt; color: #666">
+            DEPARTMENT: Project Management Office
+          </div>
+
+          <div style="margin-top: 150px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">INTERNAL EVALUATION</div>
+            <div class="cover-title">성과 평가서</div>
+            <div class="cover-subtitle" style="background-color: var(--secondary-color); color: white; display: inline-block; padding: 5px 20px">
+              PM 평가용
+            </div>
+
+            <div style="margin-top: 60px; font-size: 11pt; color: #555; width: 60%; margin-left: auto; margin-right: auto">
+              본 문서는 프로젝트 수행 과정에서의 성과, 역량, 태도를 종합적으로 진단하고 기록하기 위한 공식 자료입니다.
+            </div>
+
+            <div class="doc-id-box">
+              <div>DOCUMENT ID: PM-EVAL-2025-Q4</div>
+              <div>DATE: 2026. 01. 26</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">1. 평가 개요</div>
+        <table>
+          <tbody><tr>
+            <th class="w-20" rowspan="2">피평가자</th>
+            <th class="gray-bg w-20">성명</th>
+            <td class="w-20"><input type="text" name="doc2_eval_name" placeholder="성명 입력"></td>
+            <th class="gray-bg w-20">소속</th>
+            <td class="w-20"><input type="text" name="doc2_eval_dept" placeholder="소속 부서/팀"></td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background-color: #fff; height: 5px; border: none"></td>
+          </tr>
+          <tr>
+            <th class="w-20" rowspan="2">평가자 (PM)</th>
+            <th class="gray-bg">성명</th>
+            <td><input type="text" name="doc2_pm_name" placeholder="PM 성명 입력"></td>
+            <th class="gray-bg">평가 일자</th>
+            <td><input type="date" name="doc2_date" value="2026-01-05"></td>
+          </tr>
+          <tr>
+            <td colspan="4" style="background-color: #fff; height: 5px; border: none"></td>
+          </tr>
+          <tr>
+            <th class="w-20">대상 프로젝트</th>
+            <th class="gray-bg">프로젝트명</th>
+            <td><input type="text" name="doc2_proj_name" placeholder="프로젝트명 입력"></td>
+            <th class="gray-bg">수행 기간</th>
+            <td><input type="text" name="doc2_period" placeholder="YYYY.MM.DD ~ YYYY.MM.DD"></td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">2. 성과 평가 (총 50점)</div>
+        <p style="font-size: 9pt; color: #666; text-align: right">
+          * 각 항목별 배점을 고려하여 객관적으로 평가해 주십시오.
+        </p>
+
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목 및 기준</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">평가 점수</th>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">01. 과업 완수율 (Task Completion)</div>
+              <div style="font-size: 10pt; color: #555; margin-bottom: 10px">
+                할당된 업무(개발/분석/기획/디자인 등)를 100% 완수했는가?
+              </div>
+              <div>
+                <textarea name="doc2_item1_detail" placeholder="평가 상세 내용 입력"></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">20점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score1" min="0" max="20" class="score-input" onchange="calcDoc2Score()">
+              / 20
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">02. 산출물 품질 (Quality)</div>
+              <div style="font-size: 10pt; color: #555; margin-bottom: 10px">
+                결과물의 완성도(코드 품질, 기획 디테일, 오류 없음 등)가 우수한가?
+              </div>
+              <div>
+                <textarea name="doc2_item2_detail" placeholder="평가 상세 내용 입력"></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">20점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score2" min="0" max="20" class="score-input" onchange="calcDoc2Score()">
+              / 20
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">03. 납기 준수 (Deadline)</div>
+              <div style="font-size: 10pt; color: #555; margin-bottom: 10px">
+                정해진 마감 일정을 준수하였으며, 이슈 발생 시 즉시 공유했는가?
+              </div>
+              <div>
+                <textarea name="doc2_item3_detail" placeholder="평가 상세 내용 입력"></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">10점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score3" min="0" max="10" class="score-input" onchange="calcDoc2Score()">
+              / 10
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td class="text-right" colspan="2" style="padding-right: 20px">성과 평가 합계</td>
+            <td class="text-center"><input type="text" id="doc2_total_perf" readonly="" value="0"> / 50</td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">3. 역량 및 태도 평가 (총 50점)</div>
+
+        <div class="sub-header">역량 평가 (30점)</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목 및 기준</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">점수</th>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">기술/도구 활용 능력</div>
+              <div style="font-size: 9pt; margin-bottom: 5px">
+                프로젝트 수행에 필요한 기술 스택 및 도구를 능숙하게 다루는가?
+              </div>
+              <div><textarea name="doc2_comp1_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">15점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score4" min="0" max="15" class="score-input" onchange="calcDoc2Score()">
+              / 15
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">문제 해결 능력</div>
+              <div style="font-size: 9pt; margin-bottom: 5px">
+                프로젝트 중 발생한 이슈(버그,변경사항 등)를 주도적으로 해결했는가?
+              </div>
+              <div><textarea name="doc2_comp2_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">15점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score5" min="0" max="15" class="score-input" onchange="calcDoc2Score()">
+              / 15
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td colspan="2" class="text-right" style="padding-right: 20px">역량 평가 소계</td>
+            <td class="text-center"><input type="text" id="doc2_total_comp" readonly="" value="0"> / 30</td>
+          </tr>
+        </tbody></table>
+
+        <div class="sub-header">태도 평가 (20점)</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목 및 기준</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">점수</th>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">협업 및 소통</div>
+              <div style="font-size: 9pt; margin-bottom: 5px">팀원 간 의사소통이 원활하고 피드백을 잘 수용하는가?</div>
+              <div><textarea name="doc2_att1_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">10점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score6" min="0" max="10" class="score-input" onchange="calcDoc2Score()">
+              / 10
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">책임감 및 적극성</div>
+              <div style="font-size: 9pt; margin-bottom: 5px">
+                본인 업무에 책임을 다하며, 팀을 위해 적극적으로 행동하는가?
+              </div>
+              <div><textarea name="doc2_att2_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">10점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc2_score7" min="0" max="10" class="score-input" onchange="calcDoc2Score()">
+              / 10
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td colspan="2" class="text-right" style="padding-right: 20px">태도 평가 소계</td>
+            <td class="text-center"><input type="text" id="doc2_total_att" readonly="" value="0"> / 20</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">4. 종합 의견 (Total Review)</div>
+        <table style="margin-top: 10px">
+          <tbody><tr>
+            <th style="width: 100%; text-align: left; padding-left: 15px">프로젝트 수행 강점 (Strength)</th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc2_strength" class="large-input" style="border: none; width: 100%" placeholder="피평가자의 우수한 점과 기여도를 구체적으로 기술해 주십시오."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th style="width: 100%; text-align: left; padding-left: 15px; border-top: none">
+              보완 필요 사항 (Areas for Improvement)
+            </th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc2_improvement" class="large-input" style="border: none; width: 100%" placeholder="향후 발전을 위해 개선이 필요한 부분을 기술해 주십시오."></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+
+        <div style="margin-top: 20px; padding: 15px; border: 2px solid #333; text-align: center">
+          <h3>
+            TOTAL SCORE: <span id="doc2_final_score" style="color: var(--accent-color); font-size: 24pt">0</span> / 100
+          </h3>
+        </div>
+      </div>
+
+      <!-- DOCUMENT 3: 성과 평가서 (본부장/팀장용) -->
+      <div id="doc3" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <!-- Uniform border -->
+          <div style="position: absolute; top: 40px; left: 40px; font-size: 10pt; color: #666">
+            DEPARTMENT: Project Management Office
+          </div>
+
+          <div style="margin-top: 150px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">INTERNAL EVALUATION</div>
+            <div class="cover-title">성과 평가서</div>
+            <div class="cover-subtitle" style="background-color: var(--primary-color); color: white; display: inline-block; padding: 5px 20px">
+              본부장 / 팀장 평가용
+            </div>
+
+            <div style="margin-top: 60px; font-size: 11pt; color: #555; width: 60%; margin-left: auto; margin-right: auto">
+              본 문서는 프로젝트 수행 과정에서의 성과, 역량, 태도를 종합적으로 진단하고 기록하기 위한 공식 자료입니다.
+            </div>
+
+            <div class="doc-id-box">
+              <div>DOCUMENT ID: PM-EVAL-2025-Q4</div>
+              <div>DATE: 2026. 01. 26</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">1. 평가 개요</div>
+        <table>
+          <tbody><tr>
+            <th class="w-20" rowspan="2">피평가자</th>
+            <th class="gray-bg w-20">성명</th>
+            <td class="w-30"><input type="text" name="doc3_eval_name" placeholder="성명 입력"></td>
+            <th class="gray-bg w-20">직급</th>
+            <td class="w-30"><input type="text" name="doc3_eval_role" placeholder="직급 입력"></td>
+          </tr>
+          <tr>
+            <th class="gray-bg w-20">소속</th>
+            <td colspan="3"><input type="text" name="doc3_eval_dept" placeholder="소속 입력"></td>
+          </tr>
+          <tr>
+            <th class="w-20">평가자</th>
+            <th class="gray-bg">성명</th>
+            <td><input type="text" name="doc3_mgr_name" placeholder="성명 입력"></td>
+            <th class="gray-bg">직책</th>
+            <td><input type="text" name="doc3_mgr_role" placeholder="직책 입력"></td>
+          </tr>
+          <tr>
+            <th class="w-20">평가 기간</th>
+            <td colspan="4">2025.01.01 ~ 2025.12.31</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">2. 평가 항목 | A. 직무 역량 - 전문성 및 성장 (40점)</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 75%">평가 항목 및 상세 기술</th>
+            <th style="width: 25%">평가</th>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">Q1. 해당 직급/연차에 요구되는 전문 기술(지식)을 보유하고 있는가?</div>
+              <div style="font-size: 9pt; color: #666; margin-bottom: 10px">
+                <strong>평가 기준:</strong><br>
+                - 업무 수행에 필요한 핵심 스킬 숙련도<br>
+                - 새로운 기술 습득 노력 및 업무 적용 사례
+              </div>
+              <div>
+                <textarea name="doc3_item1_detail" placeholder="구체적인 전문성 평가 내용을 기술하시오."></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc3_score1" min="0" max="40" class="score-input" onchange="calcDoc3Score()">
+              / 40
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td class="text-right" style="padding-right: 20px">직무 역량 합계</td>
+            <td class="text-center"><input type="text" id="doc3_total_a" readonly="" value="0"> / 40</td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">3. 평가 항목 | B. 조직 기여 - 조직 기여도 (40점)</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 75%">평가 항목 및 상세 기술</th>
+            <th style="width: 25%">평가</th>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">Q2. 프로젝트 외 활동을 통해 조직의 자산(Asset) 축적에 기여했는가?</div>
+              <div style="font-size: 9pt; color: #666; margin-bottom: 10px">
+                <strong>평가 기준:</strong><br>
+                - 제안서 작성 지원, 사내 TF 참여 실적<br>
+                - 지식 공유(세미나, 기술 문서 작성) 활동<br>
+                - 신규 입사자 온보딩 지원 등
+              </div>
+              <div>
+                <textarea name="doc3_item2_detail" placeholder="조직 기여 활동 및 성과를 구체적으로 기술하시오."></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc3_score2" min="0" max="40" class="score-input" onchange="calcDoc3Score()">
+              / 40
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td class="text-right" style="padding-right: 20px">조직 기여도 합계</td>
+            <td class="text-center"><input type="text" id="doc3_total_b" readonly="" value="0"> / 40</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">4. 평가 항목 | C. 태도 - 조직 적합성 (20점)</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 75%">평가 항목 및 상세 기술</th>
+            <th style="width: 25%">평가</th>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">Q3. 회사의 핵심 가치를 준수하고 긍정적인 팀워크를 형성하는가?</div>
+              <div style="font-size: 9pt; color: #666; margin-bottom: 10px">
+                <strong>평가 기준:</strong><br>
+                - 근태 및 사규 준수<br>
+                - 동료와의 협력적 관계 유지<br>
+                - (유휴 기간) 자기개발 및 업무 지원 태도
+              </div>
+              <div>
+                <textarea name="doc3_item3_detail" placeholder="조직 적합성 및 태도 평가 내용을 기술하시오."></textarea>
+              </div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc3_score3" min="0" max="20" class="score-input" onchange="calcDoc3Score()">
+              / 20
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td class="text-right" style="padding-right: 20px">조직 적합성 합계</td>
+            <td class="text-center"><input type="text" id="doc3_total_c" readonly="" value="0"> / 20</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">5. 종합 의견 및 제언</div>
+        <div style="border: 2px solid #333; padding: 20px; margin-bottom: 30px; text-align: center">
+          <h3 style="margin: 0; margin-bottom: 10px; color: #333">TOTAL EVALUATION SCORE</h3>
+          <div style="font-size: 36pt; font-weight: 800; color: var(--primary-color)">
+            <span id="doc3_final_score">0</span>
+            <span style="font-size: 18pt; font-weight: 400; color: #777">/ 100</span>
+          </div>
+          <div style="
+              display: flex;
+              justify-content: space-around;
+              margin-top: 15px;
+              border-top: 1px dashed #ccc;
+              padding-top: 10px;
+            ">
+            <div>A. 직무역량: <span id="doc3_summary_a">0</span>/40</div>
+            <div>B. 조직기여: <span id="doc3_summary_b">0</span>/40</div>
+            <div>C. 태도: <span id="doc3_summary_c">0</span>/20</div>
+          </div>
+        </div>
+
+        <table style="margin-top: 20px">
+          <tbody><tr>
+            <th style="text-align: left; padding-left: 15px; background-color: var(--secondary-color); color: white">
+              종합 평가 코멘트
+            </th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc3_comment" class="large-input" style="height: 120px; border: none; width: 100%" placeholder="피평가자의 강점과 보완점을 포함하여 종합적인 의견을 서술하십시오."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th style="text-align: left; padding-left: 15px; background-color: var(--secondary-color); color: white">
+              향후 육성 방향 및 제언
+            </th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc3_future" class="large-input" style="height: 120px; border: none; width: 100%" placeholder="차년도 목표 설정 및 경력 개발을 위한 제언을 기술하십시오."></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+
+      <!-- DOCUMENT 4: 리더급 성과기술서 (본부장용) -->
+      <div id="doc4" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <div style="margin-top: 100px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">
+              LEADERSHIP PERFORMANCE REPORT
+            </div>
+            <div class="cover-title">2025년도 리더급 성과기술서</div>
+            <div class="cover-subtitle">본부장용 (Mini-CEO 관점)</div>
+
+            <div class="cover-info" style="margin-top: 80px">
+              <div class="cover-info-row">
+                <span class="cover-label">소속</span>
+                <div class="cover-value"><input type="text" name="doc4_dept" placeholder="OO본부"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">성명</span>
+                <div class="cover-value"><input type="text" name="doc4_name" placeholder="성명 입력"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">평가 기간</span>
+                <span class="cover-value">2025.01.01 ~ 2025.12.31</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div style="background-color: #f0f0f0; padding: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary-color);">
+          <strong>본부장의 역할 (Mini-CEO Perspective)</strong>
+          <ul style="margin-top: 10px; margin-bottom: 0;">
+            <li>본부 전체의 P&amp;L (매출/이익) 책임</li>
+            <li>포트폴리오 관리 및 신사업 발굴</li>
+            <li>팀장급 리더 육성 및 조직 문화 구축</li>
+            <li>회사 전략 실행 및 경영진 보고</li>
+          </ul>
+        </div>
+
+        <div class="section-header">1. 사업 성과</div>
+
+        <div class="sub-header">A. 재무적 성과 (P&amp;L)</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">본부 전체 매출/이익</td>
+            <td><textarea name="doc4_finance_revenue" placeholder="2025년 본부 전체 매출 및 이익 목표 대비 실적 기술"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">포트폴리오 관리</td>
+            <td><textarea name="doc4_finance_portfolio" placeholder="주요 프로젝트 수익성 관리, 수익/비수익 프로젝트 포트폴리오 조정 내용"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">대형 리스크 방어</td>
+            <td><textarea name="doc4_finance_risk" placeholder="적자 프로젝트 방어, 클레임 대응, 손실 최소화 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="sub-header">B. 신사업 발굴 및 전략적 기여</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">신사업/신규 고객 확보</td>
+            <td><textarea name="doc4_newbiz_client" placeholder="2025년 신규 수주 실적, 신사업 영역 개척 내용"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">전략적 파트너십</td>
+            <td><textarea name="doc4_newbiz_partner" placeholder="외부 협력사/기술 제휴, 전략적 파트너십 구축 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">2. 조직 관리</div>
+
+        <div class="sub-header">A. 리더 육성 (팀장급)</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">팀장 리더십 개발</td>
+            <td><textarea name="doc4_org_leader" placeholder="팀장급 리더 코칭, 멘토링, PM 역량 강화 활동"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">성과 관리</td>
+            <td><textarea name="doc4_org_performance" placeholder="팀장 KPI 관리, 1:1 면담, 피드백 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="sub-header">B. 조직 문화 및 인재 영입</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">조직 문화 구축</td>
+            <td><textarea name="doc4_org_culture" placeholder="본부 내 협업 문화, 소통 활성화, 동기부여 활동"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">우수 인재 영입</td>
+            <td><textarea name="doc4_org_recruit" placeholder="핵심 인재 채용, 경력 인재 확보 실적"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">3. 종합 정리</div>
+        <table>
+          <tbody><tr>
+            <th style="text-align: left; padding: 15px; background-color: var(--secondary-color); color: white;">
+              주요 성과 요약 (3줄 요약)
+            </th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc4_summary" class="large-input" style="border: none; width: 100%; min-height: 100px" placeholder="2025년 가장 중요한 성과 3가지를 간결하게 정리하세요."></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+
+      <!-- DOCUMENT 6: 리더급 성과기술서 (팀장용) -->
+      <div id="doc6" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <div style="margin-top: 100px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">
+              LEADERSHIP PERFORMANCE REPORT
+            </div>
+            <div class="cover-title">2025년도 리더급 성과기술서</div>
+            <div class="cover-subtitle">팀장용 (Field Commander 관점)</div>
+
+            <div class="cover-info" style="margin-top: 80px">
+              <div class="cover-info-row">
+                <span class="cover-label">소속</span>
+                <div class="cover-value"><input type="text" name="doc6_dept" placeholder="OO본부 OO팀"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">성명</span>
+                <div class="cover-value"><input type="text" name="doc6_name" placeholder="성명 입력"></div>
+              </div>
+              <div class="cover-info-row">
+                <span class="cover-label">평가 기간</span>
+                <span class="cover-value">2025.01.01 ~ 2025.12.31</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div style="background-color: #f0f0f0; padding: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary-color);">
+          <strong>팀장의 역할 (Field Commander Perspective)</strong>
+          <ul style="margin-top: 10px; margin-bottom: 0;">
+            <li>팀 단위 프로젝트 관리 및 품질 책임</li>
+            <li>팀 매출 목표 달성 및 수익성 관리</li>
+            <li>팀원 육성 및 현장 리더십 발휘</li>
+            <li>고객 만족도 및 납기 준수</li>
+          </ul>
+        </div>
+
+        <div class="section-header">1. 사업 성과 / 팀 운영 효율</div>
+
+        <div class="sub-header">A. 프로젝트 관리 성과</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">프로젝트 성공률</td>
+            <td><textarea name="doc6_proj_success" placeholder="담당 프로젝트의 성공적 완료율, 품질, 납기 준수 실적"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">팀 매출/이익 기여</td>
+            <td><textarea name="doc6_proj_revenue" placeholder="팀 단위 매출 목표 대비 달성률, 수익성 관리 내용"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">고객 만족도</td>
+            <td><textarea name="doc6_proj_customer" placeholder="클라이언트 피드백, 재계약률, 고객 관계 관리 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="sub-header">B. 운영 효율 및 프로세스 개선</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">업무 프로세스 개선</td>
+            <td><textarea name="doc6_ops_process" placeholder="팀 내 업무 효율화, 자동화, 표준화 활동"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">리소스 최적화</td>
+            <td><textarea name="doc6_ops_resource" placeholder="인력 배치 최적화, 유휴 시간 최소화 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">2. 조직 관리 (팀원 육성)</div>
+
+        <div class="sub-header">A. 팀원 성장 지원</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">코칭 및 멘토링</td>
+            <td><textarea name="doc6_team_coaching" placeholder="팀원 1:1 코칭, 기술 멘토링, 경력 개발 지원 활동"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">교육 및 역량 강화</td>
+            <td><textarea name="doc6_team_training" placeholder="팀 내 스터디, 교육 프로그램 운영, 기술 세미나 진행"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="sub-header">B. 팀 문화 및 동기부여</div>
+        <table style="margin-bottom: 20px">
+          <tbody><tr style="background-color: #f9f9f9">
+            <th style="width: 30%">평가 항목</th>
+            <th style="width: 70%">상세 기술</th>
+          </tr>
+          <tr>
+            <td class="font-bold">팀 빌딩 활동</td>
+            <td><textarea name="doc6_team_building" placeholder="팀 협업 문화 조성, 팀 이벤트, 소통 활성화 활동"></textarea></td>
+          </tr>
+          <tr>
+            <td class="font-bold">성과 인정 및 보상</td>
+            <td><textarea name="doc6_team_recognition" placeholder="팀원 인정/칭찬, 성과 보상, 동기부여 활동"></textarea></td>
+          </tr>
+        </tbody></table>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">3. 종합 정리</div>
+        <table>
+          <tbody><tr>
+            <th style="text-align: left; padding: 15px; background-color: var(--secondary-color); color: white;">
+              주요 성과 요약 (3줄 요약)
+            </th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc6_summary" class="large-input" style="border: none; width: 100%; min-height: 100px" placeholder="2025년 가장 중요한 성과 3가지를 간결하게 정리하세요."></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
+
+      <!-- DOCUMENT 5: 임원용 성과 평가서 -->
+      <div id="doc5" class="document-page" data-progress="0">
+        <div class="cover-page">
+          <!-- Uniform border -->
+          <div style="position: absolute; top: 40px; left: 40px; font-size: 10pt; color: #666">
+            DEPARTMENT: Executive Management Office
+          </div>
+
+          <div style="margin-top: 150px">
+            <div class="cover-subtitle" style="font-weight: bold; letter-spacing: 2px">EXECUTIVE EVALUATION</div>
+            <div class="cover-title">성과 평가서</div>
+            <div class="cover-subtitle" style="background-color: var(--primary-color); color: white; display: inline-block; padding: 5px 20px">
+              임원용 (본부장/팀장 평가)
+            </div>
+
+            <div style="margin-top: 60px; font-size: 11pt; color: #555; width: 60%; margin-left: auto; margin-right: auto">
+              본 문서는 리더급(본부장/팀장)의 사업 성과, 조직 관리 역량, 리더십 태도를 종합적으로 진단하고 기록하기 위한
+              공식 자료입니다.
+            </div>
+
+            <div class="doc-id-box">
+              <div>DOCUMENT ID: EXEC-EVAL-2025</div>
+              <div>DATE: 2026. 02. 06</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-break"></div>
+
+        <div class="section-header">1. 평가 개요</div>
+        <table>
+          <tbody><tr>
+            <th class="w-20" rowspan="2">피평가자</th>
+            <th class="gray-bg w-20">성명</th>
+            <td class="w-30"><input type="text" name="doc5_eval_name" placeholder="성명 입력"></td>
+            <th class="gray-bg w-20">직책</th>
+            <td class="w-30"><input type="text" name="doc5_eval_role" placeholder="본부장 / 팀장"></td>
+          </tr>
+          <tr>
+            <th class="gray-bg w-20">소속</th>
+            <td colspan="3"><input type="text" name="doc5_eval_dept" placeholder="소속 본부/팀"></td>
+          </tr>
+          <tr>
+            <th class="w-20">평가자</th>
+            <th class="gray-bg">성명</th>
+            <td><input type="text" name="doc5_exec_name" placeholder="임원 성명"></td>
+            <th class="gray-bg">직책</th>
+            <td><input type="text" name="doc5_exec_role" placeholder="직책 입력"></td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">2. 사업 성과 평가 (Business Performance)</div>
+        <p style="font-size: 9pt; color: #666; text-align: right">* 본부장: 60점 배점 / 팀장: 40점 배점 권장</p>
+
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목 및 기준</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">평가 점수</th>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">01. 재무 성과 및 목표 달성</div>
+              <div><textarea name="doc5_item1_detail" placeholder="평가 상세 내용 입력"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">30점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc5_score1" min="0" max="30" class="score-input" onchange="calcDoc5Score()">
+              / 30
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">02. 프로젝트 품질 및 고객 만족</div>
+              <div><textarea name="doc5_item2_detail" placeholder="평가 상세 내용 입력"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">20점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc5_score2" min="0" max="20" class="score-input" onchange="calcDoc5Score()">
+              / 20
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 15px">
+              <div class="font-bold mb-2">03. 신사업 발굴 및 전략적 기여</div>
+              <div><textarea name="doc5_item3_detail" placeholder="평가 상세 내용 입력"></textarea></div>
+            </td>
+            <td class="text-center" style="vertical-align: middle">10점</td>
+            <td class="text-center" style="vertical-align: middle">
+              <input type="number" name="doc5_score3" min="0" max="10" class="score-input" onchange="calcDoc5Score()">
+              / 10
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td class="text-right" colspan="2" style="padding-right: 20px">사업 성과 평가 합계</td>
+            <td class="text-center"><input type="text" id="doc5_total_biz" readonly="" value="0"> / 60</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">3. 조직 및 인재 관리 평가</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">점수</th>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">인재 육성 및 관리</div>
+              <div><textarea name="doc5_item4_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center">10점</td>
+            <td class="text-center">
+              <input type="number" name="doc5_score4" min="0" max="10" class="score-input" onchange="calcDoc5Score()">
+              / 10
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">조직 운영 및 프로세스 개선</div>
+              <div><textarea name="doc5_item5_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center">10점</td>
+            <td class="text-center">
+              <input type="number" name="doc5_score5" min="0" max="10" class="score-input" onchange="calcDoc5Score()">
+              / 10
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td colspan="2" class="text-right" style="padding-right: 20px">조직 관리 합계</td>
+            <td class="text-center"><input type="text" id="doc5_total_ppl" readonly="" value="0"> / 20</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">4. 리더십 역량 및 태도</div>
+        <table>
+          <tbody><tr>
+            <th style="width: 70%">평가 항목</th>
+            <th style="width: 15%">배점</th>
+            <th style="width: 15%">점수</th>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">전사적 리더십 및 협업</div>
+              <div><textarea name="doc5_item6_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center">10점</td>
+            <td class="text-center">
+              <input type="number" name="doc5_score6" min="0" max="10" class="score-input" onchange="calcDoc5Score()">
+              / 10
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="font-bold">윤리 경영 및 자기 개발</div>
+              <div><textarea name="doc5_item7_detail" placeholder="평가 내용"></textarea></div>
+            </td>
+            <td class="text-center">10점</td>
+            <td class="text-center">
+              <input type="number" name="doc5_score7" min="0" max="10" class="score-input" onchange="calcDoc5Score()">
+              / 10
+            </td>
+          </tr>
+          <tr class="total-score-row">
+            <td colspan="2" class="text-right" style="padding-right: 20px">리더십 평가 소계</td>
+            <td class="text-center"><input type="text" id="doc5_total_lead" readonly="" value="0"> / 20</td>
+          </tr>
+        </tbody></table>
+
+        <div class="section-header">5. 종합 의견</div>
+        <table style="margin-top: 10px">
+          <tbody><tr>
+            <th style="width: 100%; text-align: left; padding-left: 15px">강점 및 주요 기여</th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc5_strength" class="large-input" style="border: none; width: 100%" placeholder="피평가자의 우수한 점과 조직에 대한 기여도를 구체적으로 기술해 주십시오."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th style="width: 100%; text-align: left; padding-left: 15px">보완 필요 사항</th>
+          </tr>
+          <tr>
+            <td style="padding: 0">
+              <textarea name="doc5_improvement" class="large-input" style="border: none; width: 100%" placeholder="향후 발전을 위해 개선이 필요한 부분을 기술해 주십시오."></textarea>
+            </td>
+          </tr>
+        </tbody></table>
+
+        <div style="border: 2px solid #333; padding: 20px; margin-top: 30px; text-align: center">
+          <h3 style="margin: 0; margin-bottom: 10px; color: #333">TOTAL EVALUATION SCORE</h3>
+          <div style="font-size: 36pt; font-weight: 800; color: var(--primary-color)">
+            <span id="doc5_final_score">0</span>
+            <span style="font-size: 18pt; font-weight: 400; color: #777">/ 100</span>
+          </div>
+          <div style="
+              display: flex;
+              justify-content: space-around;
+              margin-top: 15px;
+              border-top: 1px dashed #ccc;
+              padding-top: 10px;
+            ">
+            <div>사업 성과: <span id="doc5_summary_biz">0</span>/60</div>
+            <div>조직 관리: <span id="doc5_summary_ppl">0</span>/20</div>
+            <div>리더십: <span id="doc5_summary_lead">0</span>/20</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="">문서가 초기화되었습니다.</div>
+
+    <!-- JavaScript -->
+    <script>
+      // Current active document
+      let currentDoc = 1;
+      let currentMainTab = 'report'; // 'report' or 'evaluation'
+      let autoSaveTimer = null;
+      let projectCounter = 1; // Track project IDs
+      let activityCounter = 1; // Track activity IDs
+
+      // Initialize on load
+      document.addEventListener('DOMContentLoaded', function () {
+        loadData();
+        updateProgress();
+        startAutoSave();
+        attachInputListeners();
+        
+        // Initialize first tab
+        switchMainTab('notice');
+      });
+
+      // Switch main tab (공지 / 가이드라인 / 성과기술서 / 성과평가서)
+      function switchMainTab(tabType) {
+        currentMainTab = tabType;
+
+        // Update main nav items
+        const navItems = document.querySelectorAll('.navbar-menu .nav-item');
+        navItems.forEach((item, index) => {
+          if ((index === 0 && tabType === 'notice') || 
+              (index === 1 && tabType === 'guide') ||
+              (index === 2 && tabType === 'report') || 
+              (index === 3 && tabType === 'evaluation')) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+
+        // Show/hide sub navigation and pages
+        const reportSubNav = document.getElementById('sub-navbar-report');
+        const evalSubNav = document.getElementById('sub-navbar-evaluation');
+        const noticePage = document.getElementById('notice-page');
+        const guidePage = document.getElementById('guide-page');
+        const allDocPages = document.querySelectorAll('[id^="doc"]');
+
+        // Hide all sub navs first
+        reportSubNav.style.display = 'none';
+        evalSubNav.style.display = 'none';
+
+        // Handle different tab types
+        if (tabType === 'notice') {
+          // Show notice page, hide all others
+          allDocPages.forEach(page => page.classList.remove('active'));
+          if (guidePage) guidePage.classList.remove('active');
+          if (noticePage) noticePage.classList.add('active');
+          updateDocumentName('📢 공지사항');
+        } else if (tabType === 'guide') {
+          // Show guide page, hide all others
+          allDocPages.forEach(page => page.classList.remove('active'));
+          if (noticePage) noticePage.classList.remove('active');
+          if (guidePage) guidePage.classList.add('active');
+          updateDocumentName('📋 가이드라인');
+        } else if (tabType === 'report') {
+          // Hide notice/guide, show report sub-nav
+          if (noticePage) noticePage.classList.remove('active');
+          if (guidePage) guidePage.classList.remove('active');
+          reportSubNav.style.display = 'flex';
+          // Activate first document in report category
+          switchTab(1);
+        } else if (tabType === 'evaluation') {
+          // Hide notice/guide, show evaluation sub-nav
+          if (noticePage) noticePage.classList.remove('active');
+          if (guidePage) guidePage.classList.remove('active');
+          evalSubNav.style.display = 'flex';
+          // Activate first document in evaluation category
+          switchTab(2);
+        }
+      }
+
+      // Helper function to update document name
+      function updateDocumentName(name) {
+        const docNameElement = document.getElementById('current-doc-name');
+        if (docNameElement) {
+          docNameElement.textContent = name;
+        }
+      }
+
+      // Switch between documents
+      function switchTab(docNum) {
+        currentDoc = docNum;
+
+        // Update sub nav items
+        const reportSubNav = document.querySelectorAll('#sub-navbar-report .sub-nav-item');
+        const evalSubNav = document.querySelectorAll('#sub-navbar-evaluation .sub-nav-item');
+
+        // Clear all active states
+        reportSubNav.forEach(item => item.classList.remove('active'));
+        evalSubNav.forEach(item => item.classList.remove('active'));
+
+        // Set active based on document number
+        if (docNum === 1) {
+          reportSubNav[0].classList.add('active');
+        } else if (docNum === 6) {
+          reportSubNav[1].classList.add('active');
+        } else if (docNum === 4) {
+          reportSubNav[2].classList.add('active');
+        } else if (docNum === 2) {
+          evalSubNav[0].classList.add('active');
+        } else if (docNum === 3) {
+          evalSubNav[1].classList.add('active');
+        } else if (docNum === 5) {
+          evalSubNav[2].classList.add('active');
+        }
+
+        // Update document pages
+        const pages = document.querySelectorAll('.document-page');
+        pages.forEach((page) => {
+          page.classList.remove('active');
+        });
+        
+        const targetPage = document.getElementById('doc' + docNum);
+        if (targetPage) {
+          targetPage.classList.add('active');
+        }
+
+        // Update document name
+        const docNames = {
+          1: '성과기술서 (팀원용)',
+          2: '성과 평가서 - PM 평가용 (팀원 평가)',
+          3: '성과 평가서 - 본부장/팀장 평가용 (팀원 평가)',
+          4: '성과기술서 (본부장용)',
+          5: '성과 평가서 - 임원 평가용 (본부장/팀장 평가)',
+          6: '성과기술서 (팀장용)',
+        };
+        document.getElementById('current-doc-name').textContent = docNames[docNum];
+
+        updateProgress();
+      }
+
+      // Save data to localStorage
+      function saveData(showToast = false) {
+        const formData = {};
+        const inputs = document.querySelectorAll('input, textarea, select');
+
+        inputs.forEach((input) => {
+          if (input.name) {
+            if (input.type === 'checkbox') {
+              formData[input.name] = input.checked;
+            } else {
+              formData[input.name] = input.value;
+            }
+          }
+        });
+
+        localStorage.setItem('openmate_hr_evaluation_2025', JSON.stringify(formData));
+
+        // Update save status
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('ko-KR');
+        document.getElementById('save-status').textContent = `마지막 저장: ${timeStr}`;
+
+        if (showToast) {
+          showToastMessage('임시저장되었습니다! ✓');
+        }
+      }
+
+      // Submit data
+      function submitData() {
+        if (!confirm('제출하시겠습니까?\n제출 후에는 수정할 수 없습니다.')) return;
+
+        // Save before submitting
+        saveData(false);
+
+        // Get all form data
+        const formData = {};
+        const inputs = document.querySelectorAll('input, textarea, select');
+
+        inputs.forEach((input) => {
+          if (input.name) {
+            if (input.type === 'checkbox') {
+              formData[input.name] = input.checked;
+            } else {
+              formData[input.name] = input.value;
+            }
+          }
+        });
+
+        // Add submission metadata
+        const submissionData = {
+          ...formData,
+          submittedAt: new Date().toISOString(),
+          submitter: formData.doc1_name || '미입력',
+          timestamp: new Date().toLocaleString('ko-KR'),
+        };
+
+        // Save submission to localStorage (in real app, this would be sent to server)
+        localStorage.setItem('openmate_hr_evaluation_2025_submitted', JSON.stringify(submissionData));
+
+        // Send to Google Sheets
+        sendToGoogleSheets(submissionData);
+
+        // Show success message
+        showToastMessage('제출이 완료되었습니다! ✅');
+
+        // Auto download JSON file as backup
+        const dataStr = JSON.stringify(submissionData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        a.download = `제출_성과평가_${timestamp}.json`;
+        a.click();
+
+        setTimeout(() => {
+          alert('제출이 완료되었습니다!\n백업 파일이 다운로드되었습니다.');
+        }, 500);
+      }
+
+      // Send data to Google Sheets
+      function sendToGoogleSheets(data) {
+        // Google Apps Script 웹 앱 URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-Xm9Q3-sF8t-cl7jjHy-A_v6ydvaEoW65UiWl5ie6J2mehhVVo701jUesjeLyaHLh/exec';
+
+        // Google Sheets로 데이터 전송
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors', // CORS 에러 방지
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then(() => {
+            console.log('데이터가 Google Sheets에 전송되었습니다.');
+          })
+          .catch((error) => {
+            console.error('Google Sheets 전송 오류:', error);
+            // 전송 실패해도 백업 파일은 다운로드됨
+          });
+      }
+
+      // Load data from localStorage
+      function loadData() {
+        const savedData = localStorage.getItem('openmate_hr_evaluation_2025');
+        if (!savedData) return;
+
+        const formData = JSON.parse(savedData);
+        const inputs = document.querySelectorAll('input, textarea, select');
+
+        inputs.forEach((input) => {
+          if (input.name && formData.hasOwnProperty(input.name)) {
+            if (input.type === 'checkbox') {
+              input.checked = formData[input.name];
+            } else {
+              input.value = formData[input.name];
+            }
+          }
+        });
+
+        // Recalculate scores
+        calcDoc2Score();
+        calcDoc3Score();
+        calcDoc5Score();
+      }
+
+      // Reset current document
+      function resetForm() {
+        if (!confirm('현재 문서의 모든 내용을 초기화하시겠습니까?')) return;
+
+        const currentPage = document.querySelector(`#doc${currentDoc}`);
+        const inputs = currentPage.querySelectorAll('input, textarea, select');
+
+        inputs.forEach((input) => {
+          if (input.type === 'checkbox') {
+            input.checked = false;
+          } else if (!input.hasAttribute('readonly')) {
+            input.value = '';
+          }
+        });
+
+        saveData();
+        updateProgress();
+        showToastMessage('문서가 초기화되었습니다.');
+      }
+
+      // Export data as JSON
+      function exportData() {
+        const formData = {};
+        const inputs = document.querySelectorAll('input, textarea, select');
+
+        inputs.forEach((input) => {
+          if (input.name) {
+            if (input.type === 'checkbox') {
+              formData[input.name] = input.checked;
+            } else {
+              formData[input.name] = input.value;
+            }
+          }
+        });
+
+        const dataStr = JSON.stringify(formData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `openmate_hr_evaluation_2025_${new Date().getTime()}.json`;
+        a.click();
+
+        showToastMessage('데이터가 내보내기되었습니다! 📥');
+      }
+
+      // Import data from JSON (function kept but button removed)
+      function importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const formData = JSON.parse(e.target.result);
+            const inputs = document.querySelectorAll('input, textarea, select');
+
+            inputs.forEach((input) => {
+              if (input.name && formData.hasOwnProperty(input.name)) {
+                if (input.type === 'checkbox') {
+                  input.checked = formData[input.name];
+                } else {
+                  input.value = formData[input.name];
+                }
+              }
+            });
+
+            saveData();
+            updateProgress();
+            calcDoc2Score();
+            calcDoc3Score();
+            calcDoc5Score();
+            showToastMessage('데이터를 불러왔습니다! 📤');
+          } catch (error) {
+            alert('파일을 읽는 중 오류가 발생했습니다.');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      // Print document
+      function printDocument() {
+        // Before printing, replace all textareas and inputs with divs containing their values
+        const textareas = document.querySelectorAll('textarea');
+        const inputs = document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"]:not([readonly])');
+        
+        const originalElements = [];
+        
+        // Replace textareas with divs
+        textareas.forEach(textarea => {
+          const div = document.createElement('div');
+          div.style.padding = '8px';
+          div.style.border = '1px solid #ddd';
+          div.style.minHeight = '60px';
+          div.style.whiteSpace = 'pre-wrap';
+          div.style.wordWrap = 'break-word';
+          div.style.lineHeight = '1.5';
+          div.textContent = textarea.value || textarea.placeholder;
+          div.className = 'print-replacement';
+          
+          if (!textarea.value) {
+            div.style.color = '#999';
+            div.style.fontStyle = 'italic';
+          }
+          
+          originalElements.push({ original: textarea, replacement: div });
+          textarea.parentNode.replaceChild(div, textarea);
+        });
+        
+        // Replace text inputs with divs
+        inputs.forEach(input => {
+          const div = document.createElement('div');
+          div.style.padding = '4px 8px';
+          div.style.border = '1px solid #ddd';
+          div.style.minHeight = '30px';
+          div.style.lineHeight = '1.5';
+          div.textContent = input.value || input.placeholder;
+          div.className = 'print-replacement';
+          
+          if (!input.value) {
+            div.style.color = '#999';
+            div.style.fontStyle = 'italic';
+          }
+          
+          originalElements.push({ original: input, replacement: div });
+          input.parentNode.replaceChild(div, input);
+        });
+        
+        // Print after a short delay
+        setTimeout(() => {
+          window.print();
+          
+          // Restore original elements after printing
+          setTimeout(() => {
+            originalElements.forEach(({ original, replacement }) => {
+              replacement.parentNode.replaceChild(original, replacement);
+            });
+          }, 100);
+        }, 100);
+      }
+
+      // Calculate Document 2 scores
+      function calcDoc2Score() {
+        let perf = 0;
+        let comp = 0;
+        let att = 0;
+
+        // Performance (50 points)
+        for (let i = 1; i <= 3; i++) {
+          const val = parseInt(document.querySelector(`input[name="doc2_score${i}"]`)?.value || 0);
+          perf += val;
+        }
+
+        // Competency (30 points)
+        for (let i = 4; i <= 5; i++) {
+          const val = parseInt(document.querySelector(`input[name="doc2_score${i}"]`)?.value || 0);
+          comp += val;
+        }
+
+        // Attitude (20 points)
+        for (let i = 6; i <= 7; i++) {
+          const val = parseInt(document.querySelector(`input[name="doc2_score${i}"]`)?.value || 0);
+          att += val;
+        }
+
+        document.getElementById('doc2_total_perf').value = perf;
+        document.getElementById('doc2_total_comp').value = comp;
+        document.getElementById('doc2_total_att').value = att;
+        document.getElementById('doc2_final_score').textContent = perf + comp + att;
+      }
+
+      // Calculate Document 3 scores
+      function calcDoc3Score() {
+        let scoreA = 0;
+        let scoreB = 0;
+        let scoreC = 0;
+
+        // A. 직무 역량 (40점)
+        scoreA = parseInt(document.querySelector(`input[name="doc3_score1"]`)?.value || 0);
+        
+        // B. 조직 기여 (40점)
+        scoreB = parseInt(document.querySelector(`input[name="doc3_score2"]`)?.value || 0);
+        
+        // C. 태도 (20점)
+        scoreC = parseInt(document.querySelector(`input[name="doc3_score3"]`)?.value || 0);
+
+        document.getElementById('doc3_total_a').value = scoreA;
+        document.getElementById('doc3_total_b').value = scoreB;
+        document.getElementById('doc3_total_c').value = scoreC;
+        document.getElementById('doc3_final_score').textContent = scoreA + scoreB + scoreC;
+        document.getElementById('doc3_summary_a').textContent = scoreA;
+        document.getElementById('doc3_summary_b').textContent = scoreB;
+        document.getElementById('doc3_summary_c').textContent = scoreC;
+      }
+
+      // Calculate Document 5 scores
+      function calcDoc5Score() {
+        let biz = 0;
+        let ppl = 0;
+        let lead = 0;
+
+        for (let i = 1; i <= 3; i++) {
+          biz += parseInt(document.querySelector(`input[name="doc5_score${i}"]`)?.value || 0);
+        }
+        for (let i = 4; i <= 5; i++) {
+          ppl += parseInt(document.querySelector(`input[name="doc5_score${i}"]`)?.value || 0);
+        }
+        for (let i = 6; i <= 7; i++) {
+          lead += parseInt(document.querySelector(`input[name="doc5_score${i}"]`)?.value || 0);
+        }
+
+        document.getElementById('doc5_total_biz').value = biz;
+        document.getElementById('doc5_total_ppl').value = ppl;
+        document.getElementById('doc5_total_lead').value = lead;
+        document.getElementById('doc5_final_score').textContent = biz + ppl + lead;
+        document.getElementById('doc5_summary_biz').textContent = biz;
+        document.getElementById('doc5_summary_ppl').textContent = ppl;
+        document.getElementById('doc5_summary_lead').textContent = lead;
+      }
+
+      // Update progress
+      function updateProgress() {
+        const currentPage = document.querySelector(`#doc${currentDoc}`);
+        const inputs = currentPage.querySelectorAll('input:not([readonly]), textarea, select');
+
+        let filled = 0;
+        let total = inputs.length;
+
+        inputs.forEach((input) => {
+          if (input.type === 'checkbox') {
+            if (input.checked) filled++;
+          } else if (input.value.trim() !== '') {
+            filled++;
+          }
+        });
+
+        const percentage = total > 0 ? Math.round((filled / total) * 100) : 0;
+        document.getElementById('progress-bar').style.width = percentage + '%';
+        document.getElementById('progress-text').textContent = percentage + '%';
+      }
+
+      // Auto save every 3 seconds
+      function startAutoSave() {
+        setInterval(() => {
+          saveData(false);
+        }, 3000);
+      }
+
+      // Attach input listeners
+      function attachInputListeners() {
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach((input) => {
+          input.addEventListener('input', updateProgress);
+          input.addEventListener('change', updateProgress);
+        });
+      }
+
+      // Show toast notification
+
+      // Add new project
+      function addProject() {
+        projectCounter++;
+        const container = document.getElementById('projects-container');
+        
+        const projectHTML = `
+          <div class="project-item" data-project-id="${projectCounter}">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="section-header" style="flex-grow: 1; margin: 0;">프로젝트 성과기술서 #${projectCounter}</div>
+              <button class="action-btn" style="background-color: #e74c3c; margin-left: 10px;" onclick="removeProject(${projectCounter})">
+                <i class="fas fa-trash"></i> 삭제
+              </button>
+            </div>
+            <p style="font-size: 10pt; color: #666; margin-bottom: 20px">
+              * 2025년 1월~12월 기간동안 수행했던 모든 프로젝트에 대해 개별 작성
+            </p>
+
+            <table>
+              <tbody><tr>
+                <th class="w-20">PROJECT NAME</th>
+                <td colspan="3"><input type="text" name="doc1_proj${projectCounter}_name" placeholder="프로젝트명 입력"></td>
+              </tr>
+              <tr>
+                <th>PERIOD</th>
+                <td>
+                  <div style="display: flex; gap: 5px; align-items: center">
+                    <input type="date" name="doc1_proj${projectCounter}_start" style="width: 140px"> ~
+                    <input type="date" name="doc1_proj${projectCounter}_end" style="width: 140px">
+                  </div>
+                </td>
+                <th class="w-20">ROLE</th>
+                <td>
+                  <select name="doc1_proj${projectCounter}_role">
+                    <option value="">선택하세요</option>
+                    <option value="PM">PM</option>
+                    <option value="PL">PL</option>
+                    <option value="개발">개발</option>
+                    <option value="기획">기획</option>
+                    <option value="분석">분석</option>
+                    <option value="디자인">디자인</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">1. 프로젝트 목표</div>
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px">
+              <textarea name="doc1_proj${projectCounter}_goals" placeholder="- 목표 내용 입력&#10;- 목표 내용 입력" style="border: none; width: 100%"></textarea>
+            </div>
+
+            <div class="sub-header">2. 주요 수행 내용</div>
+            <table style="margin-bottom: 20px">
+              <tbody><tr style="background-color: #f9f9f9">
+                <th style="width: 10%">No.</th>
+                <th style="width: 30%">주요 업무 영역</th>
+                <th style="width: 60%">상세 업무 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center">1</td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task1_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task1_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+              <tr>
+                <td class="text-center">2</td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task2_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task2_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+              <tr>
+                <td class="text-center">3</td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task3_area" placeholder="주요 업무 영역"></td>
+                <td><input type="text" name="doc1_proj${projectCounter}_task3_detail" placeholder="상세 업무 내용 기술"></td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">3. 주요 성과 (정량/정성)</div>
+            <table style="margin-bottom: 20px">
+              <tbody><tr>
+                <th class="w-20">구분</th>
+                <th>성과 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정량적 성과</td>
+                <td><textarea name="doc1_proj${projectCounter}_perf_quant" placeholder="목표 대비 정량적 달성 내용 기술"></textarea></td>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정성적 성과</td>
+                <td><textarea name="doc1_proj${projectCounter}_perf_qual" placeholder="정성적 성과 내용 기술"></textarea></td>
+              </tr>
+            </tbody></table>
+
+            <div class="page-break"></div>
+          </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', projectHTML);
+        renumberProjects();
+        attachInputListeners();
+        updateProgress();
+        saveData();
+        showToastMessage('프로젝트가 추가되었습니다! ✓');
+      }
+
+      // Remove project
+      function removeProject(id) {
+        const projects = document.querySelectorAll('.project-item');
+        if (projects.length === 1) {
+          alert('최소 1개의 프로젝트는 유지되어야 합니다.');
+          return;
+        }
+        
+        if (confirm('이 프로젝트를 삭제하시겠습니까?')) {
+          const projectItem = document.querySelector(`.project-item[data-project-id="${id}"]`);
+          if (projectItem) {
+            projectItem.remove();
+            renumberProjects();
+            updateProgress();
+            saveData();
+            showToastMessage('프로젝트가 삭제되었습니다.');
+          }
+        }
+      }
+
+      // Renumber projects after add/remove
+      function renumberProjects() {
+        const projects = document.querySelectorAll('.project-item');
+        projects.forEach((project, index) => {
+          const header = project.querySelector('.section-header');
+          header.textContent = `프로젝트 성과기술서 #${index + 1}`;
+        });
+      }
+
+      // Add new activity
+      function addActivity() {
+        activityCounter++;
+        const container = document.getElementById('activities-container');
+        
+        const activityHTML = `
+          <div class="activity-item" data-activity-id="${activityCounter}">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div class="section-header" style="flex-grow: 1; margin: 0;">프로젝트 외 성과기술서 #${activityCounter}</div>
+              <button class="action-btn" style="background-color: #e74c3c; margin-left: 10px;" onclick="removeActivity(${activityCounter})">
+                <i class="fas fa-trash"></i> 삭제
+              </button>
+            </div>
+            <p style="font-size: 10pt; color: #666; margin-bottom: 20px">
+              * 내부 프로젝트, 사내 활동, 교육 이수 등 프로젝트 외 활동 내역 작성
+            </p>
+
+            <table>
+              <tbody><tr>
+                <th class="w-20">ACTIVITY NAME</th>
+                <td colspan="3"><input type="text" name="doc1_act${activityCounter}_name" placeholder="활동명 입력"></td>
+              </tr>
+              <tr>
+                <th>PERIOD</th>
+                <td colspan="3">
+                  <div style="display: flex; gap: 5px; align-items: center">
+                    <input type="date" name="doc1_act${activityCounter}_start" style="width: 140px"> ~
+                    <input type="date" name="doc1_act${activityCounter}_end" style="width: 140px">
+                  </div>
+                </td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">1. 활동 목표</div>
+            <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px">
+              <textarea name="doc1_act${activityCounter}_goals" placeholder="- 목표 내용 입력&#10;- 목표 내용 입력" style="border: none; width: 100%"></textarea>
+            </div>
+
+            <div class="sub-header">2. 활동 내용</div>
+            <table>
+              <tbody><tr style="background-color: #f9f9f9">
+                <th style="width: 30%">주요 활동</th>
+                <th style="width: 70%">상세 수행 내용 기술</th>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act${activityCounter}_item1_title" placeholder="주요 활동 1"></td>
+                <td><input type="text" name="doc1_act${activityCounter}_item1_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act${activityCounter}_item2_title" placeholder="주요 활동 2"></td>
+                <td><input type="text" name="doc1_act${activityCounter}_item2_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="doc1_act${activityCounter}_item3_title" placeholder="주요 활동 3"></td>
+                <td><input type="text" name="doc1_act${activityCounter}_item3_detail" placeholder="상세 수행 내용 기술"></td>
+              </tr>
+            </tbody></table>
+
+            <div class="sub-header">3. 주요 성과</div>
+            <table>
+              <tbody><tr>
+                <th class="w-20">구분</th>
+                <th>성과 내용 기술</th>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정량적 성과</td>
+                <td><textarea name="doc1_act${activityCounter}_quant" placeholder="목표 대비 정량적 달성 내용 기술"></textarea></td>
+              </tr>
+              <tr>
+                <td class="text-center font-bold">정성적 성과</td>
+                <td><textarea name="doc1_act${activityCounter}_qual" placeholder="정성적 성과 내용 기술"></textarea></td>
+              </tr>
+            </tbody></table>
+
+            <div class="page-break"></div>
+          </div>
+        `;
+        
+        container.insertAdjacentHTML('beforeend', activityHTML);
+        renumberActivities();
+        attachInputListeners();
+        updateProgress();
+        saveData();
+        showToastMessage('활동이 추가되었습니다! ✓');
+      }
+
+      // Remove activity
+      function removeActivity(id) {
+        const activities = document.querySelectorAll('.activity-item');
+        if (activities.length === 1) {
+          alert('최소 1개의 활동은 유지되어야 합니다.');
+          return;
+        }
+        
+        if (confirm('이 활동을 삭제하시겠습니까?')) {
+          const activityItem = document.querySelector(`.activity-item[data-activity-id="${id}"]`);
+          if (activityItem) {
+            activityItem.remove();
+            renumberActivities();
+            updateProgress();
+            saveData();
+            showToastMessage('활동이 삭제되었습니다.');
+          }
+        }
+      }
+
+      // Renumber activities after add/remove
+      function renumberActivities() {
+        const activities = document.querySelectorAll('.activity-item');
+        activities.forEach((activity, index) => {
+          const header = activity.querySelector('.section-header');
+          header.textContent = `프로젝트 외 성과기술서 #${index + 1}`;
+        });
+      }
+
+      function showToastMessage(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'show';
+        setTimeout(() => {
+          toast.className = toast.className.replace('show', '');
+        }, 3000);
+      }
+    </script>
+  
+
+<script defer="" src="./openmate-performance-evaluation-2025_files/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon="{&quot;rayId&quot;:&quot;9b98f172795d3079&quot;,&quot;serverTiming&quot;:{&quot;name&quot;:{&quot;cfExtPri&quot;:true,&quot;cfEdge&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfL4&quot;:true,&quot;cfSpeedBrain&quot;:true,&quot;cfCacheStatus&quot;:true}},&quot;version&quot;:&quot;2025.9.1&quot;,&quot;token&quot;:&quot;4edd5f8ec12a48cfa682ab8261b80a79&quot;}" crossorigin="anonymous"></script>
+</body></html>
