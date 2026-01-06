@@ -662,6 +662,40 @@
           display: none !important;
         }
       }
+
+        /* ========================================================= */
+    /* 👇 [수정] 아래 코드가 반드시 이 위치(맨 마지막)에 있어야 합니다 👇 */
+    /* ========================================================= */
+
+    /* [강력 수정] 모든 입력 필드가 박스 밖으로 튀어나가는 문제 해결 (화면/인쇄 모두 적용) */
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+        /* 패딩과 테두리를 너비에 포함시킴 */
+        -webkit-box-sizing: border-box !important;
+           -moz-box-sizing: border-box !important;
+                box-sizing: border-box !important;
+
+        /* 부모 요소 너비에 딱 맞게 강제 설정 */
+        width: 100% !important;
+        max-width: 100% !important;
+
+        /* 일관된 스타일을 위한 추가 설정 */
+        padding: 8px !important;
+        border: 1px solid #ccc !important;
+        border-radius: 4px !important;
+    }
+
+    /* 테이블 셀 안의 입력 필드에 대한 추가적인 안전 장치 */
+    table td input,
+    table td select,
+    table td textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+        
     </style>
   </head>
   <body style="">
